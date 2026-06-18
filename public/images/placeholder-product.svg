@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Produkt pa imazh">
+  <rect width="400" height="400" fill="#f3f4f6"/>
+  <rect x="80" y="110" width="240" height="180" rx="18" fill="#e5e7eb"/>
+  <path d="M125 245l50-58 45 43 32-34 50 49v25H125z" fill="#cbd5e1"/>
+  <circle cx="260" cy="155" r="22" fill="#cbd5e1"/>
+  <text x="200" y="330" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#6b7280">Produkt</text>
+</svg>
