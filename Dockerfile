@@ -20,7 +20,8 @@ RUN npm ci
 COPY resources ./resources
 COPY public ./public
 COPY vite.config.js tailwind.config.js postcss.config.js ./
-RUN npm run build
+RUN npm run build \
+    && test -f public/build/manifest.json
 
 FROM php:8.3-apache-bookworm AS app
 
@@ -48,7 +49,8 @@ COPY --from=vendor /app/vendor ./vendor
 COPY . .
 COPY --from=assets /app/public/build ./public/build
 
-RUN composer dump-autoload --no-dev --optimize \
+RUN test -f public/build/manifest.json \
+    && composer dump-autoload --no-dev --optimize \
     && php artisan package:discover --ansi \
     && mkdir -p \
         storage/app/public \

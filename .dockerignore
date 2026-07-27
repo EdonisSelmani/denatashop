@@ -7,7 +7,6 @@
 .phpunit.result.cache
 node_modules
 vendor
-public/build
 public/hot
 public/storage
 storage/app/public/*
