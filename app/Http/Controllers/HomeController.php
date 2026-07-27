@@ -10,9 +10,12 @@ class HomeController extends Controller
 {
     public function index()
     {
-        // Get categories with subcategories count
         $categories = Category::where('is_active', true)
-            ->withCount('subcategories')
+            ->whereHas('products', fn ($query) => $query->where('products.is_active', true))
+            ->with(['subcategories' => fn ($query) => $query
+                ->where('subcategories.is_active', true)
+                ->whereHas('products', fn ($productQuery) => $productQuery->where('products.is_active', true))])
+            ->withCount(['products as active_products_count' => fn ($query) => $query->where('products.is_active', true)])
             ->get();
         
         // Featured Products
@@ -42,7 +45,7 @@ class HomeController extends Controller
         $discountProducts = Product::with('subcategory.category')
             ->where('is_active', true)
             ->whereNotNull('compare_price')
-            ->whereRaw('compare_price > price')
+            ->whereColumn('compare_price', '>', 'price')
             ->latest()
             ->take(8)
             ->get();

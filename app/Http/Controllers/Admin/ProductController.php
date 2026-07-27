@@ -34,8 +34,8 @@ class ProductController extends Controller
             'compare_price' => 'nullable|numeric|gt:price',
             'stock' => 'required|integer|min:0',
             'sku' => 'required|unique:products',
-            'image' => 'nullable|image|max:2048',
-            'gallery.*' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'gallery.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
         
         $data = $request->except(['gallery', 'image']);
@@ -75,8 +75,8 @@ class ProductController extends Controller
             'compare_price' => 'nullable|numeric|gt:price',
             'stock' => 'required|integer|min:0',
             'sku' => 'required|unique:products,sku,' . $product->id,
-            'image' => 'nullable|image|max:2048',
-            'gallery.*' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'gallery.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
         
         $data = $request->except(['gallery', 'image']);

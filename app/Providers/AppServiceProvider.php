@@ -19,7 +19,10 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer(['layouts.navigation', 'layouts.footer'], function ($view) {
             $categories = Cache::remember('navigation.categories', now()->addMinutes(10), fn () => Category::where('is_active', true)
-                ->with(['subcategories' => fn ($query) => $query->where('is_active', true)])
+                ->whereHas('products', fn ($query) => $query->where('products.is_active', true))
+                ->with(['subcategories' => fn ($query) => $query
+                    ->where('subcategories.is_active', true)
+                    ->whereHas('products', fn ($productQuery) => $productQuery->where('products.is_active', true))])
                 ->get());
 
             $view->with('categories', $categories);

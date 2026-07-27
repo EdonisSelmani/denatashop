@@ -26,7 +26,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|unique:categories|max:255',
             'description' => 'nullable',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
         
         $data = $request->only(['name', 'description']);
@@ -54,7 +54,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|max:255|unique:categories,name,' . $category->id,
             'description' => 'nullable',
-            'image' => 'nullable|image|max:2048'
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
         
         $data = $request->only(['name', 'description']);

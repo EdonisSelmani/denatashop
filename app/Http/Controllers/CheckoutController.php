@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
+    private const RECENT_ORDER_SESSION_KEY = 'checkout_recent_order_number';
+
     public function index(Request $request, CartService $cart)
     {
         $cartItems = $cart->items();
@@ -117,12 +119,22 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', $exception->getMessage());
         }
 
+        session()->put(self::RECENT_ORDER_SESSION_KEY, $order->order_number);
+
         return redirect()->route('checkout.success', $order->order_number)->with('success', 'Porosia u krijua me sukses.');
     }
 
     public function success(string $orderNumber)
     {
         $order = Order::with('items.product')->where('order_number', $orderNumber)->firstOrFail();
+
+        $recentOrderNumber = session(self::RECENT_ORDER_SESSION_KEY);
+        $isRecentCheckout = $recentOrderNumber && hash_equals((string) $recentOrderNumber, $order->order_number);
+        $isOwner = Auth::check()
+            && $order->user_id !== null
+            && (int) $order->user_id === Auth::id();
+
+        abort_unless($isOwner || $isRecentCheckout, 403);
 
         return view('orders.show', compact('order'));
     }

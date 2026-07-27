@@ -21,7 +21,7 @@
                             @endif
                         </div>
                         <h3 class="font-semibold text-gray-800 mb-1">{{ $category->name }}</h3>
-                        <p class="text-sm text-gray-500">{{ $category->subcategories_count }} produkte</p>
+                        <p class="text-sm text-gray-500">{{ $category->active_products_count }} produkte</p>
                     </div>
                 </a>
             @endforeach

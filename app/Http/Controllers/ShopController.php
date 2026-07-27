@@ -49,7 +49,10 @@ class ShopController extends Controller
         };
 
         $products = $query->paginate(12)->withQueryString();
-        $categories = Category::with(['subcategories' => fn ($q) => $q->where('is_active', true)])
+        $categories = Category::whereHas('products', fn ($q) => $q->where('products.is_active', true))
+            ->with(['subcategories' => fn ($q) => $q
+                ->where('subcategories.is_active', true)
+                ->whereHas('products', fn ($productQuery) => $productQuery->where('products.is_active', true))])
             ->where('is_active', true)
             ->get();
 
@@ -108,7 +111,10 @@ class ShopController extends Controller
         };
 
         $products = $query->paginate(12)->withQueryString();
-        $subcategories = $category->subcategories()->where('is_active', true)->get();
+        $subcategories = $category->subcategories()
+            ->where('subcategories.is_active', true)
+            ->whereHas('products', fn ($query) => $query->where('products.is_active', true))
+            ->get();
 
         return view('shop.category', compact('category', 'products', 'subcategories'));
     }
