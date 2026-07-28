@@ -1,126 +1,72 @@
-{{-- resources/views/auth/register.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Regjistrohu')
+@section('title', 'Regjistrohu - Denata Shop')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <!-- Logo dhe Title -->
-        <div class="text-center">
-            <div class="mx-auto h-16 w-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                </svg>
+<section class="bg-[#F7F5F1] px-4 py-12 sm:px-6 lg:px-8">
+    <div class="mx-auto grid max-w-5xl overflow-hidden rounded-lg border border-[#E5E1DA] bg-white shadow-[0_24px_70px_rgba(21,24,27,0.08)] lg:grid-cols-[0.9fr_1.1fr]">
+        <div class="hidden bg-[#15181B] p-10 text-white lg:flex lg:flex-col lg:justify-between">
+            <div>
+                <img src="{{ asset('images/denata-shop-logo-web.png') }}" alt="Denata Shop" class="max-h-[70px] w-auto rounded bg-white p-1 object-contain">
+                <h1 class="mt-10 text-3xl font-black">Krijo llogari Denata</h1>
+                <p class="mt-4 leading-8 text-[#E5E1DA]">Ruaj produktet e preferuara dhe vazhdo porosite me te dhena te plotesuara.</p>
             </div>
-            <h2 class="mt-6 text-3xl font-extrabold text-gray-900">Krijo llogari</h2>
-            <p class="mt-2 text-sm text-gray-600">Regjistrohu për të filluar blerjet</p>
+            <div class="grid gap-3 text-sm text-[#E5E1DA]">
+                <span class="inline-flex items-center gap-2"><x-store.icon name="heart" class="h-4 w-4 text-[#B88A3B]" /> Wishlist personale</span>
+                <span class="inline-flex items-center gap-2"><x-store.icon name="truck" class="h-4 w-4 text-[#B88A3B]" /> Porosi me te shpejta</span>
+            </div>
         </div>
 
-        <!-- Forma e Register -->
-        <div class="bg-white rounded-2xl shadow-xl p-8 space-y-6">
-            <form method="POST" action="{{ route('register') }}" class="space-y-6">
+        <div class="p-6 sm:p-10">
+            <div class="text-center lg:text-left">
+                <a href="{{ route('home') }}" class="inline-flex lg:hidden">
+                    <img src="{{ asset('images/denata-shop-logo-web.png') }}" alt="Denata Shop" class="max-h-[58px] w-auto object-contain">
+                </a>
+                <p class="mt-6 text-sm font-black uppercase text-[#9A712E] lg:mt-0">Llogari e re</p>
+                <h2 class="mt-2 text-3xl font-black text-[#15181B]">Regjistrohu</h2>
+                <p class="mt-2 text-sm text-[#6B6F74]">Plotesoni te dhenat per te krijuar llogarine tuaj.</p>
+            </div>
+
+            <form method="POST" action="{{ route('register') }}" class="mt-8 space-y-5">
                 @csrf
 
-                <!-- Name -->
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                        Emri i plotë
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                            </svg>
-                        </div>
-                        <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus
-                            class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('name') border-red-500 @enderror"
-                            placeholder="Emri juaj">
-                    </div>
+                    <label for="name" class="mb-2 block text-sm font-bold text-[#15181B]">Emri i plote</label>
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name" class="store-input w-full" placeholder="Emri juaj">
                     @error('name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm font-semibold text-[#C9473D]">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Email Address -->
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                        Adresa email
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
-                            </svg>
-                        </div>
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                            class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('email') border-red-500 @enderror"
-                            placeholder="ju@example.com">
-                    </div>
+                    <label for="email" class="mb-2 block text-sm font-bold text-[#15181B]">Adresa email</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username" class="store-input w-full" placeholder="ju@example.com">
                     @error('email')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm font-semibold text-[#C9473D]">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Password -->
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
-                        Fjalëkalimi
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                            </svg>
-                        </div>
-                        <input id="password" type="password" name="password" required
-                            class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition @error('password') border-red-500 @enderror"
-                            placeholder="••••••••">
-                    </div>
+                    <label for="password" class="mb-2 block text-sm font-bold text-[#15181B]">Fjalekalimi</label>
+                    <input id="password" type="password" name="password" required autocomplete="new-password" class="store-input w-full" placeholder="********">
                     @error('password')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm font-semibold text-[#C9473D]">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Confirm Password -->
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
-                        Konfirmo fjalëkalimin
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                            </svg>
-                        </div>
-                        <input id="password_confirmation" type="password" name="password_confirmation" required
-                            class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                            placeholder="••••••••">
-                    </div>
+                    <label for="password_confirmation" class="mb-2 block text-sm font-bold text-[#15181B]">Konfirmo fjalekalimin</label>
+                    <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" class="store-input w-full" placeholder="********">
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" 
-                    class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all transform hover:scale-[1.02]">
-                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                        <svg class="h-5 w-5 text-blue-300 group-hover:text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                        </svg>
-                    </span>
-                    Regjistrohu
-                </button>
+                <button type="submit" class="btn-primary w-full">Krijo llogari</button>
             </form>
 
-            <!-- Login Link -->
-            <div class="text-center">
-                <p class="text-sm text-gray-600">
-                    Keni tashmë llogari?
-                    <a href="{{ route('login') }}" class="font-medium text-blue-600 hover:text-blue-500 transition">
-                        Hyni këtu
-                    </a>
-                </p>
-            </div>
+            <p class="mt-6 text-center text-sm text-[#6B6F74]">
+                Keni tashme llogari?
+                <a href="{{ route('login') }}" class="font-bold text-[#9A712E] hover:text-[#15181B]">Hyni ketu</a>
+            </p>
         </div>
     </div>
-</div>
+</section>
 @endsection

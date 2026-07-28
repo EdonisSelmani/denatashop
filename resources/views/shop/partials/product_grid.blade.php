@@ -1,9 +1,14 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
     @forelse($products as $product)
-        @include('shop.partials.product-card', ['product' => $product])
+        <x-store.product-card :product="$product" />
     @empty
-        <div class="col-span-full text-center py-12">
-            <p class="text-gray-500">No products found.</p>
+        <div class="col-span-full">
+            <x-store.empty-state
+                icon="search"
+                title="Nuk u gjet asnje produkt"
+                text="Provo te ndryshosh filtrat ose kerko me nje fjale tjeter."
+                action="Pastro filtrat"
+                :href="route('shop')" />
         </div>
     @endforelse
 </div>

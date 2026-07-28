@@ -40,6 +40,10 @@ class ShopController extends Controller
             $query->where('price', '<=', $request->max_price);
         }
 
+        if ($request->get('availability') === 'in_stock') {
+            $query->where('stock', '>', 0);
+        }
+
         match ($request->get('sort', 'latest')) {
             'price_low' => $query->orderBy('price'),
             'price_high' => $query->orderByDesc('price'),
@@ -100,6 +104,10 @@ class ShopController extends Controller
 
         if ($request->filled('max_price')) {
             $query->where('price', '<=', $request->max_price);
+        }
+
+        if ($request->get('availability') === 'in_stock') {
+            $query->where('stock', '>', 0);
         }
 
         match ($request->get('sort', 'latest')) {

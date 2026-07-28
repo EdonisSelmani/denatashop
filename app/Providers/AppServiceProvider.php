@@ -17,7 +17,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        View::composer(['layouts.navigation', 'layouts.footer'], function ($view) {
+        View::composer([
+            'layouts.navigation',
+            'layouts.footer',
+            'components.store.header',
+            'components.store.mobile-menu',
+            'components.store.footer',
+        ], function ($view) {
             $categories = Cache::remember('navigation.categories', now()->addMinutes(10), fn () => Category::where('is_active', true)
                 ->whereHas('products', fn ($query) => $query->where('products.is_active', true))
                 ->with(['subcategories' => fn ($query) => $query

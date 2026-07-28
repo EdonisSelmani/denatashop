@@ -52,9 +52,15 @@ document.addEventListener('click', async function(event) {
 
     event.preventDefault();
 
+    if (button.disabled) {
+        return;
+    }
+
     const formData = new FormData();
     formData.append('product_id', button.dataset.productId);
     formData.append('quantity', button.dataset.quantity || '1');
+    const originalHtml = button.innerHTML;
+    button.disabled = true;
 
     try {
         const response = await fetch(button.dataset.url, {
@@ -70,6 +76,7 @@ document.addEventListener('click', async function(event) {
 
         if (data.success) {
             window.showToast?.(data.message, 'success');
+            button.innerHTML = '<span>Shtuar</span>';
             if (data.cart_count !== undefined) {
                 const cartCount = document.getElementById('cart-count');
                 if (cartCount) {
@@ -80,6 +87,59 @@ document.addEventListener('click', async function(event) {
             window.location.href = data.redirect;
         } else {
             window.showToast?.(data.message || 'Nuk u shtua ne shporte', 'error');
+        }
+    } catch (error) {
+        window.showToast?.('Ndodhi nje gabim', 'error');
+    } finally {
+        setTimeout(() => {
+            button.innerHTML = originalHtml;
+            button.disabled = false;
+        }, 900);
+    }
+});
+
+document.addEventListener('click', async function(event) {
+    const button = event.target.closest('.add-to-wishlist');
+
+    if (!button) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append('product_id', button.dataset.productId);
+
+    try {
+        const response = await fetch(button.dataset.url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            },
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            window.showToast?.(data.message, 'success');
+
+            const wishlistCount = document.getElementById('wishlist-count');
+            if (wishlistCount && data.wishlist_count !== undefined) {
+                wishlistCount.textContent = data.wishlist_count;
+            }
+
+            button.classList.toggle('is-favorited', Boolean(data.is_favorited));
+            button.classList.toggle('text-[#C9473D]', Boolean(data.is_favorited));
+            const icon = button.querySelector('svg');
+            if (icon) {
+                icon.classList.toggle('fill-current', Boolean(data.is_favorited));
+            }
+        } else if (data.redirect) {
+            window.location.href = data.redirect;
+        } else {
+            window.showToast?.(data.message || 'Lista e deshirave nuk u perditesua', 'error');
         }
     } catch (error) {
         window.showToast?.('Ndodhi nje gabim', 'error');
