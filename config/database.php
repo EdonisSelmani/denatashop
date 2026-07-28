@@ -64,6 +64,26 @@ return [
             ]) : [],
         ],
 
+        'source' => [
+            'driver' => env('SOURCE_DB_CONNECTION', 'mysql'),
+            'url' => env('SOURCE_DB_URL'),
+            'host' => env('SOURCE_DB_HOST'),
+            'port' => env('SOURCE_DB_PORT', '3306'),
+            'database' => env('SOURCE_DB_DATABASE'),
+            'username' => env('SOURCE_DB_USERNAME'),
+            'password' => env('SOURCE_DB_PASSWORD'),
+            'unix_socket' => env('SOURCE_DB_SOCKET', ''),
+            'charset' => env('SOURCE_DB_CHARSET', 'utf8mb4'),
+            'collation' => env('SOURCE_DB_COLLATION', 'utf8mb4_unicode_ci'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('SOURCE_MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'mariadb' => [
             'driver' => 'mariadb',
             'url' => env('DB_URL'),
