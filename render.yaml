@@ -42,6 +42,10 @@ services:
         sync: false
       - key: DB_SSLMODE
         value: require
+      - key: RUN_CATALOG_IMPORT
+        value: false
+      - key: RUN_CATALOG_IMPORT_DRY_RUN
+        value: false
       - key: SESSION_DRIVER
         value: cookie
       - key: SESSION_ENCRYPT

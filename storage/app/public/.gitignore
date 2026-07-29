@@ -1,2 +1,14 @@
 *
 !.gitignore
+!products/
+!products/**/
+!products/**/*.jpg
+!products/**/*.jpeg
+!products/**/*.png
+!products/**/*.webp
+!product-thumbs/
+!product-thumbs/**/
+!product-thumbs/**/*.jpg
+!product-thumbs/**/*.jpeg
+!product-thumbs/**/*.png
+!product-thumbs/**/*.webp

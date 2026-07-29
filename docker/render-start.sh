@@ -21,6 +21,12 @@ if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
     php artisan migrate --force
 fi
 
+if [ "${RUN_CATALOG_IMPORT_DRY_RUN:-false}" = "true" ]; then
+    php artisan catalog:deploy-to-production --dry-run
+elif [ "${RUN_CATALOG_IMPORT:-false}" = "true" ]; then
+    php artisan catalog:deploy-to-production
+fi
+
 php artisan config:cache
 
 if ! php artisan route:cache; then
