@@ -3,8 +3,15 @@ set -eu
 
 PORT="${PORT:-10000}"
 
-sed -ri "s/^Listen .*/Listen ${PORT}/" /etc/apache2/ports.conf
-sed -ri "s/<VirtualHost \*:.*>/<VirtualHost *:${PORT}>/" /etc/apache2/sites-available/000-default.conf
+cat > /etc/apache2/ports.conf <<EOF
+Listen 0.0.0.0:${PORT}
+EOF
+
+sed -ri "s#<VirtualHost \*:[0-9]+>#<VirtualHost *:${PORT}>#g" /etc/apache2/sites-available/000-default.conf
+sed -ri "s#DocumentRoot .*#DocumentRoot /var/www/html/public#g" /etc/apache2/sites-available/000-default.conf
+
+echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf
+a2enconf servername >/dev/null
 
 mkdir -p \
     storage/app/public \
@@ -35,5 +42,10 @@ if ! php artisan route:cache; then
 fi
 
 php artisan view:cache
+
+echo "Starting Apache on 0.0.0.0:${PORT}"
+grep -R "Listen" /etc/apache2/ports.conf
+grep -E "VirtualHost|DocumentRoot" /etc/apache2/sites-available/000-default.conf
+apache2ctl -S
 
 exec apache2-foreground
