@@ -12,10 +12,45 @@ use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\CouponController;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Http\Controllers\HomeController;
 use Illuminate\Http\Request; // Shtoni këtë!
 
+
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok']);
+})->withoutMiddleware([StartSession::class, ShareErrorsFromSession::class, VerifyCsrfToken::class])->name('health');
+
+Route::get('/health/db', function () {
+    $startedAt = microtime(true);
+
+    try {
+        DB::select('select 1 as ok');
+
+        return response()->json([
+            'status' => 'ok',
+            'database' => 'ok',
+            'duration_ms' => round((microtime(true) - $startedAt) * 1000, 2),
+        ]);
+    } catch (\Throwable $exception) {
+        Log::warning('health:db-failed', [
+            'duration_ms' => round((microtime(true) - $startedAt) * 1000, 2),
+            'error' => class_basename($exception),
+        ]);
+
+        return response()->json([
+            'status' => 'error',
+            'database' => 'failed',
+            'error' => class_basename($exception),
+            'duration_ms' => round((microtime(true) - $startedAt) * 1000, 2),
+        ], 503);
+    }
+})->withoutMiddleware([StartSession::class, ShareErrorsFromSession::class, VerifyCsrfToken::class])->name('health.db');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
