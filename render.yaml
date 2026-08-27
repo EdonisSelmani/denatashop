@@ -4,7 +4,7 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./Dockerfile
-    healthCheckPath: /
+    healthCheckPath: /health
     envVars:
       - key: APP_NAME
         value: DenataShop
@@ -57,7 +57,7 @@ services:
       - key: SESSION_SAME_SITE
         value: lax
       - key: CACHE_STORE
-        value: array
+        value: file
       - key: QUEUE_CONNECTION
         value: sync
       - key: FILESYSTEM_DISK
