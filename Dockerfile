@@ -37,6 +37,7 @@ RUN apt-get update \
         libpq-dev \
         libxml2-dev \
         libzip-dev \
+        iproute2 \
         unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" bcmath gd mbstring pdo_pgsql xml zip opcache \

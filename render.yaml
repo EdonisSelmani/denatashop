@@ -42,6 +42,8 @@ services:
         sync: false
       - key: DB_SSLMODE
         value: require
+      - key: RUN_MIGRATIONS
+        value: false
       - key: RUN_CATALOG_IMPORT
         value: false
       - key: RUN_CATALOG_IMPORT_DRY_RUN
