@@ -73,4 +73,4 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
 
 EXPOSE 10000
 
-CMD ["sh", "/var/www/html/docker/render-start.sh"]
+CMD ["./docker/render-start.sh"]
