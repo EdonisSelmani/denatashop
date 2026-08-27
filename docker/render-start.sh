@@ -13,12 +13,6 @@ sed -ri "s#DocumentRoot .*#DocumentRoot /var/www/html/public#g" /etc/apache2/sit
 echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf
 a2enconf servername >/dev/null
 
-echo "PORT=${PORT}"
-echo "Apache ports.conf:"
-cat /etc/apache2/ports.conf
-echo "Apache enabled default virtual host:"
-cat /etc/apache2/sites-enabled/000-default.conf
-
 mkdir -p \
     storage/app/public \
     storage/framework/cache \
@@ -27,37 +21,20 @@ mkdir -p \
     storage/logs \
     bootstrap/cache
 
-php artisan storage:link >/dev/null 2>&1 || true
-php artisan optimize:clear
-
-if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
-    php artisan migrate --force
+if [ ! -L public/storage ] && [ ! -e public/storage ]; then
+    ln -s ../storage/app/public public/storage
 fi
-
-if [ "${RUN_CATALOG_IMPORT_DRY_RUN:-false}" = "true" ]; then
-    php artisan catalog:deploy-to-production --dry-run
-elif [ "${RUN_CATALOG_IMPORT:-false}" = "true" ]; then
-    php artisan catalog:deploy-to-production
-fi
-
-php artisan config:cache
-
-if ! php artisan route:cache; then
-    echo "Route cache failed; continuing without cached routes." >&2
-    php artisan route:clear || true
-fi
-
-php artisan view:cache
 
 echo "Starting Apache on 0.0.0.0:${PORT}"
-grep -R "Listen" /etc/apache2/ports.conf
-grep -E "VirtualHost|DocumentRoot" /etc/apache2/sites-available/000-default.conf
-apache2ctl -S
-echo "Listening sockets before Apache foreground:"
-ss -ltnp || netstat -ltnp || true
 
 (
     sleep 2
+    echo "PORT=${PORT}"
+    echo "Apache ports.conf:"
+    cat /etc/apache2/ports.conf
+    echo "Apache enabled default virtual host:"
+    cat /etc/apache2/sites-enabled/000-default.conf
+    apache2ctl -S
     echo "Listening sockets after Apache foreground start:"
     ss -ltnp || netstat -ltnp || true
 ) &
