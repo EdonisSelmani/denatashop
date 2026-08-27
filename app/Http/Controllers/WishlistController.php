@@ -16,6 +16,7 @@ class WishlistController extends Controller
     public function index()
     {
         $wishlistItems = Auth::user()->favorites()
+            ->with('subcategory:id,category_id,name,slug')
             ->where('is_active', true)
             ->get();
         

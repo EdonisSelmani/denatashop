@@ -17,6 +17,11 @@ class CartService
         }
 
         $cart = session('guest_cart', []);
+
+        if ($cart === []) {
+            return collect();
+        }
+
         $products = Product::with('subcategory')->whereIn('id', array_keys($cart))->get()->keyBy('id');
 
         return collect($cart)

@@ -15,6 +15,10 @@ class PublicCatalogCache
     public const NAVIGATION_CATEGORIES_KEY = 'public.navigation.categories.v2';
     public const HOMEPAGE_SECTIONS_KEY = 'public.homepage.sections.v2';
 
+    private ?EloquentCollection $navigationCategories = null;
+
+    private ?array $homepageSections = null;
+
     public function hasNavigationCategories(): bool
     {
         return Cache::has(self::NAVIGATION_CATEGORIES_KEY);
@@ -27,7 +31,7 @@ class PublicCatalogCache
 
     public function navigationCategories(): EloquentCollection
     {
-        return Cache::remember(self::NAVIGATION_CATEGORIES_KEY, self::TTL_SECONDS, fn () => Category::query()
+        return $this->navigationCategories ??= Cache::remember(self::NAVIGATION_CATEGORIES_KEY, self::TTL_SECONDS, fn () => Category::query()
             ->where('is_active', true)
             ->whereHas('products', fn (Builder $query) => $query->where('products.is_active', true))
             ->with(['subcategories' => fn ($query) => $query
@@ -38,9 +42,21 @@ class PublicCatalogCache
             ->get());
     }
 
+    public function categoryBySlug(string $slug): ?Category
+    {
+        return $this->navigationCategories()->firstWhere('slug', $slug);
+    }
+
+    public function subcategoryBySlug(string $slug)
+    {
+        return $this->navigationCategories()
+            ->flatMap->subcategories
+            ->firstWhere('slug', $slug);
+    }
+
     public function homepageSections(): array
     {
-        return Cache::remember(self::HOMEPAGE_SECTIONS_KEY, self::TTL_SECONDS, function () {
+        return $this->homepageSections ??= Cache::remember(self::HOMEPAGE_SECTIONS_KEY, self::TTL_SECONDS, function () {
             $featuredProducts = $this->baseHomepageProductQuery()
                 ->where('products.is_featured', true)
                 ->latest('products.created_at')
@@ -74,7 +90,7 @@ class PublicCatalogCache
                 ->take(8)
                 ->get();
 
-            $this->loadSharedHomepageRelations(
+            $this->attachSubcategoryRelations(
                 $featuredProducts,
                 $newProducts,
                 $bestSellers,
@@ -110,20 +126,39 @@ class PublicCatalogCache
             ->where('products.is_active', true);
     }
 
-    private function loadSharedHomepageRelations(EloquentCollection ...$collections): void
+    public function attachSubcategoryRelations(EloquentCollection ...$collections): void
     {
-        $models = [];
+        $subcategories = $this->navigationCategories()
+            ->flatMap(function (Category $category) {
+                return $category->subcategories->each(
+                    fn ($subcategory) => $subcategory->setRelation('category', $category)
+                );
+            })
+            ->keyBy('id');
+
+        $missingRelationModels = [];
 
         foreach ($collections as $collection) {
-            array_push($models, ...$collection->all());
+            foreach ($collection as $product) {
+                $subcategory = $subcategories->get($product->subcategory_id);
+
+                if ($subcategory) {
+                    $product->setRelation('subcategory', $subcategory);
+
+                    continue;
+                }
+
+                $missingRelationModels[] = $product;
+            }
         }
 
-        if ($models === []) {
+        if ($missingRelationModels === []) {
             return;
         }
 
-        (new EloquentCollection($models))->load([
+        (new EloquentCollection($missingRelationModels))->load([
             'subcategory:id,category_id,name,slug',
+            'subcategory.category:id,name,slug',
         ]);
     }
 }

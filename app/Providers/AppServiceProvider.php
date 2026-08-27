@@ -31,11 +31,12 @@ class AppServiceProvider extends ServiceProvider
 
             if ($sharedUserData === null) {
                 $user = Auth::user();
+                $wishlistProductIds = $user ? $user->favorites()->pluck('products.id')->all() : [];
 
                 $sharedUserData = [
                     'cartCount' => $user ? $user->cartItems()->sum('quantity') : array_sum(session('guest_cart', [])),
-                    'wishlistCount' => $user ? $user->favorites()->count() : 0,
-                    'wishlistProductIds' => $user ? $user->favorites()->pluck('products.id')->all() : [],
+                    'wishlistCount' => count($wishlistProductIds),
+                    'wishlistProductIds' => $wishlistProductIds,
                 ];
             }
 
