@@ -51,6 +51,64 @@ class ShopPublicTest extends TestCase
         }
     }
 
+    public function test_search_suggestions_prioritize_active_name_prefix_matches(): void
+    {
+        [, $product] = $this->createCatalogProduct([
+            'name' => 'Lavaman Alpha',
+            'slug' => 'lavaman-alpha',
+            'sku' => 'QA-LAVAMAN-ALPHA',
+            'price' => 12.5,
+        ]);
+
+        Product::create([
+            'subcategory_id' => $product->subcategory_id,
+            'name' => 'Sink Lavaman',
+            'slug' => 'sink-lavaman',
+            'description' => 'Contains match should be ranked after prefix matches.',
+            'price' => 18.9,
+            'stock' => 8,
+            'sku' => 'QA-SINK-LAVAMAN',
+            'is_active' => true,
+            'is_featured' => false,
+        ]);
+
+        Product::create([
+            'subcategory_id' => $product->subcategory_id,
+            'name' => 'Inactive Lavaman',
+            'slug' => 'inactive-lavaman',
+            'description' => 'Inactive product should not appear.',
+            'price' => 18.9,
+            'stock' => 8,
+            'sku' => 'QA-INACTIVE-LAVAMAN',
+            'is_active' => false,
+            'is_featured' => false,
+        ]);
+
+        foreach (range(2, 9) as $index) {
+            Product::create([
+                'subcategory_id' => $product->subcategory_id,
+                'name' => 'Lavaman Suggestion '.$index,
+                'slug' => 'lavaman-suggestion-'.$index,
+                'description' => 'Additional active suggestion.',
+                'price' => 10 + $index,
+                'stock' => 5,
+                'sku' => 'QA-LAVAMAN-'.$index,
+                'is_active' => true,
+                'is_featured' => false,
+            ]);
+        }
+
+        $response = $this->getJson(route('search.suggestions', ['q' => 'lavaman']));
+
+        $response
+            ->assertOk()
+            ->assertJsonCount(8, 'suggestions')
+            ->assertJsonPath('suggestions.0.name', 'Lavaman Alpha')
+            ->assertJsonPath('suggestions.0.price', '12.50')
+            ->assertJsonPath('has_more', true)
+            ->assertJsonMissing(['name' => 'Inactive Lavaman']);
+    }
+
     public function test_shop_filters_and_sorting_load(): void
     {
         [$category, $product] = $this->createCatalogProduct();

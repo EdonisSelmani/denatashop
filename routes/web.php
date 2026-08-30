@@ -56,6 +56,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Public routes
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+Route::get('/search/suggestions', [ShopController::class, 'suggestions'])
+    ->withoutMiddleware([StartSession::class, ShareErrorsFromSession::class, VerifyCsrfToken::class])
+    ->name('search.suggestions');
 Route::get('/product/{slug}', [ShopController::class, 'show'])->name('product.show');
 
 // KATEGORITË - VETËM NJË HERË! (Redirect në shop)

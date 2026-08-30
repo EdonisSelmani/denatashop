@@ -39,7 +39,12 @@
     ]);
 @endphp
 
-<header x-data="{ mobileOpen: false, accountOpen: false }" class="sticky top-0 z-40 border-b border-[#E5E1DA] bg-white/95 shadow-[0_1px_0_rgba(21,24,27,0.04)] backdrop-blur">
+<header
+    x-data="{ mobileOpen: false, accountOpen: false }"
+    x-effect="document.body.classList.toggle('overflow-hidden', mobileOpen)"
+    @keydown.escape.window="mobileOpen = false"
+    class="sticky top-0 z-40 border-b border-[#E5E1DA] bg-white/95 shadow-[0_1px_0_rgba(21,24,27,0.04)] backdrop-blur"
+>
     <div class="bg-[#15181B] text-white">
         <div class="mx-auto flex max-w-7xl items-center justify-center gap-5 px-4 py-2 text-[11px] font-semibold uppercase sm:justify-between sm:px-6 lg:px-8">
             <div class="hidden items-center gap-5 sm:flex">
@@ -68,20 +73,7 @@
                 <img src="{{ asset('images/denata-shop-logo-web.png') }}" alt="Denata Shop" class="h-[42px] w-auto object-contain sm:h-[58px]">
             </a>
 
-            <form action="{{ route('shop') }}" method="GET" class="hidden flex-1 md:block">
-                <label for="store-search" class="sr-only">Kerko produkte</label>
-                <div class="relative mx-auto max-w-2xl">
-                    <input id="store-search"
-                           type="search"
-                           name="search"
-                           value="{{ request('search') }}"
-                           placeholder="Kerko produkt, kategori ose SKU"
-                           class="h-12 w-full rounded-md border border-[#D8D1C6] bg-[#F7F5F1] pl-4 pr-14 text-sm text-[#17191C] placeholder:text-[#6B6F74] transition focus:border-[#B88A3B] focus:bg-white focus:ring-[#B88A3B]">
-                    <button type="submit" class="absolute right-1.5 top-1.5 inline-flex h-9 w-10 items-center justify-center rounded-md bg-[#15181B] text-white transition hover:bg-[#B88A3B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]" aria-label="Kerko">
-                        <x-store.icon name="search" class="h-4 w-4" />
-                    </button>
-                </div>
-            </form>
+            <x-store.search-autocomplete class="hidden flex-1 md:block" />
 
             <div class="ml-auto flex items-center gap-1 sm:gap-2">
                 @auth

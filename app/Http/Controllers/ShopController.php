@@ -8,6 +8,7 @@ use App\Models\Subcategory;
 use App\Services\PublicCatalogCache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class ShopController extends Controller
@@ -78,6 +79,64 @@ class ShopController extends Controller
         }
 
         return view('shop.index', compact('products', 'categories'));
+    }
+
+    public function suggestions(Request $request): JsonResponse
+    {
+        $term = trim((string) $request->query('q', ''));
+        $term = preg_replace('/\s+/u', ' ', $term) ?: $term;
+        $term = mb_substr($term, 0, 80, 'UTF-8');
+
+        if ($term === '') {
+            return response()->json([
+                'suggestions' => [],
+                'has_more' => false,
+            ]);
+        }
+
+        $normalized = mb_strtolower($term, 'UTF-8');
+        $namePrefix = $normalized.'%';
+        $skuPrefix = $normalized.'%';
+        $contains = '%'.$normalized.'%';
+
+        $products = Product::query()
+            ->select([
+                'products.id',
+                'products.name',
+                'products.slug',
+                'products.price',
+                'products.sku',
+                'products.image',
+                'products.is_active',
+            ])
+            ->where('products.is_active', true)
+            ->where(function (Builder $query) use ($namePrefix, $normalized, $skuPrefix, $contains): void {
+                $query->whereRaw('LOWER(products.name) LIKE ?', [$namePrefix])
+                    ->orWhereRaw('LOWER(products.sku) = ?', [$normalized])
+                    ->orWhereRaw('LOWER(products.sku) LIKE ?', [$skuPrefix])
+                    ->orWhereRaw('LOWER(products.name) LIKE ?', [$contains]);
+            })
+            ->orderByRaw(
+                'CASE WHEN LOWER(products.name) LIKE ? THEN 0 WHEN LOWER(products.sku) = ? THEN 1 WHEN LOWER(products.sku) LIKE ? THEN 2 ELSE 3 END',
+                [$namePrefix, $normalized, $skuPrefix]
+            )
+            ->orderBy('products.name')
+            ->limit(9)
+            ->get();
+
+        return response()->json([
+            'suggestions' => $products
+                ->take(8)
+                ->map(fn (Product $product): array => [
+                    'name' => $product->name,
+                    'sku' => $product->sku,
+                    'price' => number_format((float) $product->price, 2, '.', ''),
+                    'url' => route('product.show', $product->slug, false),
+                    'thumbnail_url' => $this->thumbnailUrl($product),
+                ])
+                ->values(),
+            'has_more' => $products->count() > 8,
+        ]);
     }
 
     public function show($slug, PublicCatalogCache $catalogCache)
@@ -191,5 +250,28 @@ class ShopController extends Controller
                 'products.created_at',
             ])
             ->where('products.is_active', true);
+    }
+
+    private function thumbnailUrl(Product $product): string
+    {
+        if ($product->image) {
+            $pathInfo = pathinfo($product->image);
+            $thumbnailPath = 'product-thumbs/'.($pathInfo['dirname'] !== '.' ? $pathInfo['dirname'].'/' : '').$pathInfo['filename'].'.webp';
+
+            if (file_exists(storage_path('app/public/'.$thumbnailPath))) {
+                return $this->relativeAssetUrl('storage/'.$thumbnailPath);
+            }
+
+            if (file_exists(storage_path('app/public/'.$product->image))) {
+                return $this->relativeAssetUrl('storage/'.$product->image);
+            }
+        }
+
+        return $this->relativeAssetUrl('images/placeholder-product.svg');
+    }
+
+    private function relativeAssetUrl(string $path): string
+    {
+        return '/'.ltrim($path, '/');
     }
 }

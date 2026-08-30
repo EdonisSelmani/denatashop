@@ -27,6 +27,7 @@
             @foreach($wishlistItems as $product)
                 @php
                     $hasDiscount = $product->compare_price && (float) $product->compare_price > (float) $product->price;
+                    $discount = $hasDiscount ? round(((float) $product->compare_price - (float) $product->price) / (float) $product->compare_price * 100) : null;
                 @endphp
                 <article class="wishlist-item group flex h-full flex-col overflow-hidden rounded-lg border border-[#E5E1DA] bg-white transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_rgba(21,24,27,0.10)]" data-product-id="{{ $product->id }}">
                     <div class="relative border-b border-[#E5E1DA] bg-[#F7F5F1]">
@@ -37,7 +38,7 @@
                             <x-store.icon name="heart" class="h-5 w-5 fill-current" />
                         </button>
                         @if($hasDiscount)
-                            <span class="absolute left-3 top-3 rounded-full bg-[#C9473D] px-2.5 py-1 text-xs font-bold text-white">Oferta</span>
+                            <span class="absolute left-3 top-3 rounded-full bg-[#C9473D] px-2.5 py-1 text-xs font-bold text-white">-{{ $discount }}%</span>
                         @endif
                     </div>
 

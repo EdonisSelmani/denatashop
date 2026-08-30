@@ -7,6 +7,7 @@
 @section('content')
 @php
     $hasDiscount = $product->compare_price && (float) $product->compare_price > (float) $product->price;
+    $discount = $hasDiscount ? round(((float) $product->compare_price - (float) $product->price) / (float) $product->compare_price * 100) : null;
     $gallery = collect($product->gallery ?? [])->filter()->values();
     $isFavorited = in_array($product->id, $wishlistProductIds ?? [], true);
 @endphp
@@ -29,7 +30,7 @@
             <div class="relative rounded-lg border border-[#E5E1DA] bg-white p-4">
                 @if($hasDiscount)
                     <span class="absolute left-5 top-5 rounded-full bg-[#C9473D] px-3 py-1 text-xs font-black text-white">
-                        Oferta
+                        -{{ $discount }}%
                     </span>
                 @endif
                 <div class="flex aspect-square items-center justify-center rounded-md bg-[#F7F5F1] p-6">

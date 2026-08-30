@@ -1,13 +1,25 @@
 @props(['navItems' => collect()])
 
-<div x-show="mobileOpen"
-     x-cloak
-     class="fixed inset-0 z-50 lg:hidden"
-     aria-modal="true"
-     role="dialog">
-    <div class="absolute inset-0 bg-[#15181B]/55" @click="mobileOpen = false"></div>
+<div
+    x-cloak
+    class="fixed inset-0 z-50 lg:hidden"
+    :class="mobileOpen ? 'pointer-events-auto' : 'pointer-events-none'"
+    :aria-hidden="(!mobileOpen).toString()"
+    aria-modal="true"
+    role="dialog"
+>
+    <div
+        x-show="mobileOpen"
+        x-transition.opacity
+        class="absolute inset-0 bg-[#15181B]/65 backdrop-blur-sm"
+        @click="mobileOpen = false"
+    ></div>
 
-    <aside class="absolute right-0 top-0 flex h-full w-full max-w-sm flex-col overflow-y-auto bg-[#F7F5F1] shadow-2xl"
+    <aside
+           x-show="mobileOpen"
+           @click.outside="mobileOpen = false"
+           class="absolute right-0 top-0 flex h-[100dvh] w-[90vw] max-w-[420px] flex-col overflow-y-auto overflow-x-hidden bg-[#F7F5F1] shadow-2xl"
+           style="padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);"
            x-transition:enter="transition ease-out duration-200"
            x-transition:enter-start="translate-x-full"
            x-transition:enter-end="translate-x-0"
@@ -26,44 +38,90 @@
             </button>
         </div>
 
-        <div class="space-y-5 px-4 py-5">
-            <form action="{{ route('shop') }}" method="GET">
-                <label for="mobile-store-search" class="sr-only">Kerko produkte</label>
-                <div class="relative">
-                    <input id="mobile-store-search"
-                           type="search"
-                           name="search"
-                           value="{{ request('search') }}"
-                           placeholder="Kerko produkte, SKU ose kategori"
-                           class="w-full rounded-md border border-[#E5E1DA] bg-white py-3 pl-4 pr-12 text-sm text-[#17191C] placeholder:text-[#6B6F74] focus:border-[#B88A3B] focus:ring-[#B88A3B]">
-                    <button type="submit" class="absolute right-1.5 top-1.5 inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#15181B] text-white transition hover:bg-[#B88A3B]" aria-label="Kerko">
-                        <x-store.icon name="search" class="h-4 w-4" />
-                    </button>
+        <div class="space-y-4 px-4 py-4">
+            <x-store.search-autocomplete
+                id="mobile-store-search"
+                placeholder="Kerko produkte ose SKU"
+                input-class="w-full rounded-md border border-[#E5E1DA] bg-white py-3 pl-4 pr-12 text-sm text-[#17191C] placeholder:text-[#6B6F74] focus:border-[#B88A3B] focus:ring-[#B88A3B]"
+                button-class="absolute right-1.5 top-1.5 inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#15181B] text-white transition hover:bg-[#B88A3B]"
+            />
+
+            <div class="grid grid-cols-3 gap-2">
+                <a href="{{ route('wishlist.index') }}" @click="mobileOpen = false" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border border-[#E5E1DA] bg-white px-2 py-3 text-center text-xs font-black text-[#15181B]">
+                    <x-store.icon name="heart" class="h-5 w-5 text-[#C9473D]" />
+                    <span>Lista</span>
+                    <span class="text-[11px] text-[#6B6F74]">{{ $wishlistCount ?? 0 }}</span>
+                </a>
+                <a href="{{ route('cart.index') }}" @click="mobileOpen = false" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border border-[#E5E1DA] bg-white px-2 py-3 text-center text-xs font-black text-[#15181B]">
+                    <x-store.icon name="cart" class="h-5 w-5 text-[#B88A3B]" />
+                    <span>Shporta</span>
+                    <span class="text-[11px] text-[#6B6F74]">{{ $cartCount ?? 0 }}</span>
+                </a>
+                @auth
+                    <a href="{{ route('profile.edit') }}" @click="mobileOpen = false" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border border-[#E5E1DA] bg-white px-2 py-3 text-center text-xs font-black text-[#15181B]">
+                        <x-store.icon name="user" class="h-5 w-5 text-[#9A712E]" />
+                        <span>Llogaria</span>
+                        <span class="truncate text-[11px] text-[#6B6F74]">{{ Str::limit(Auth::user()->name, 12) }}</span>
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" @click="mobileOpen = false" class="flex min-w-0 flex-col items-center justify-center gap-1 rounded-lg border border-[#E5E1DA] bg-white px-2 py-3 text-center text-xs font-black text-[#15181B]">
+                        <x-store.icon name="user" class="h-5 w-5 text-[#9A712E]" />
+                        <span>Hyrja</span>
+                        <span class="text-[11px] text-[#6B6F74]">Login</span>
+                    </a>
+                @endauth
+            </div>
+
+            @auth
+                <div class="rounded-lg border border-[#E5E1DA] bg-white p-2">
+                    <a href="{{ route('orders.index') }}" @click="mobileOpen = false" class="flex items-center justify-between rounded-md px-3 py-2 text-sm font-bold text-[#15181B] hover:bg-[#F7F5F1]">
+                        Porosite
+                        <x-store.icon name="arrow-right" class="h-4 w-4 text-[#B88A3B]" />
+                    </a>
+                    @if(Auth::user()->is_admin)
+                        <a href="{{ route('admin.dashboard') }}" @click="mobileOpen = false" class="flex items-center justify-between rounded-md px-3 py-2 text-sm font-bold text-[#9A712E] hover:bg-[#F7F5F1]">
+                            Admin
+                            <x-store.icon name="arrow-right" class="h-4 w-4 text-[#B88A3B]" />
+                        </a>
+                    @endif
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="flex w-full items-center justify-between rounded-md px-3 py-2 text-left text-sm font-bold text-[#15181B] hover:bg-[#F7F5F1]">
+                            Dilni
+                            <x-store.icon name="arrow-right" class="h-4 w-4 text-[#B88A3B]" />
+                        </button>
+                    </form>
                 </div>
-            </form>
+            @else
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="{{ route('login') }}" @click="mobileOpen = false" class="rounded-lg bg-[#15181B] px-3 py-3 text-center text-sm font-black text-white">Hyni</a>
+                    <a href="{{ route('register') }}" @click="mobileOpen = false" class="rounded-lg border border-[#D8D1C6] bg-white px-3 py-3 text-center text-sm font-black text-[#15181B]">Regjistrohu</a>
+                </div>
+            @endauth
 
             <nav aria-label="Kategorite mobile" class="space-y-2">
                 @foreach($navItems as $item)
                     <div class="rounded-lg border border-[#E5E1DA] bg-white" x-data="{ open: false }">
                         <div class="flex items-center">
-                            <a href="{{ $item['href'] }}" class="flex min-w-0 flex-1 items-center gap-3 px-4 py-3 font-bold text-[#17191C]">
-                                <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-[#F7F5F1] text-[#B88A3B]">
-                                    <x-store.icon :name="$item['icon']" class="h-5 w-5" />
+                            <a href="{{ $item['href'] }}" @click="mobileOpen = false" class="flex min-w-0 flex-1 items-center gap-3 px-3 py-2.5 font-bold text-[#17191C]">
+                                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#F7F5F1] text-[#B88A3B]">
+                                    <x-store.icon :name="$item['icon']" class="h-4 w-4" />
                                 </span>
                                 <span class="truncate">{{ $item['label'] }}</span>
                             </a>
                             @if(($item['children'] ?? collect())->count())
                                 <button type="button" class="mr-2 inline-flex h-9 w-9 items-center justify-center rounded-md text-[#6B6F74]" @click="open = !open" :aria-expanded="open.toString()" aria-label="Hap nen-kategorite">
-                                    <x-store.icon name="chevron-down" class="h-4 w-4" />
+                                    <x-store.icon name="chevron-down" class="h-4 w-4 transition" x-bind:class="{ 'rotate-180': open }" />
                                 </button>
                             @endif
                         </div>
                         @if(($item['children'] ?? collect())->count())
-                            <div x-show="open" x-cloak class="border-t border-[#E5E1DA] px-4 py-3">
-                                <div class="grid gap-2">
-                                    @foreach($item['children']->take(10) as $subcategory)
+                            <div x-show="open" x-cloak x-transition class="border-t border-[#E5E1DA] px-3 py-2">
+                                <div class="grid gap-1">
+                                    @foreach($item['children']->take(18) as $subcategory)
                                         <a href="{{ route('shop', ['category' => $item['category_slug'], 'subcategory' => $subcategory->slug]) }}"
-                                           class="rounded-md px-3 py-2 text-sm text-[#6B6F74] transition hover:bg-[#F7F5F1] hover:text-[#9A712E]">
+                                           @click="mobileOpen = false"
+                                           class="rounded-md px-3 py-2 text-sm font-semibold text-[#6B6F74] transition hover:bg-[#F7F5F1] hover:text-[#9A712E]">
                                             {{ $subcategory->name }}
                                         </a>
                                     @endforeach
