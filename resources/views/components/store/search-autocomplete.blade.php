@@ -1,9 +1,9 @@
 @props([
     'id' => 'store-search',
-    'placeholder' => 'Kerko produkt, kategori ose SKU',
+    'placeholder' => 'Kërko produkte, SKU ose kategori',
     'boxClass' => 'relative mx-auto max-w-2xl',
-    'inputClass' => 'h-12 w-full rounded-md border border-[#D8D1C6] bg-[#F7F5F1] pl-4 pr-14 text-sm text-[#17191C] placeholder:text-[#6B6F74] transition focus:border-[#B88A3B] focus:bg-white focus:ring-[#B88A3B]',
-    'buttonClass' => 'absolute right-1.5 top-1.5 inline-flex h-9 w-10 items-center justify-center rounded-md bg-[#15181B] text-white transition hover:bg-[#B88A3B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]',
+    'inputClass' => 'h-14 w-full rounded-lg border border-[#E5E7EB] bg-white pl-6 pr-16 text-base text-[#111111] shadow-[0_8px_24px_rgba(17,17,17,0.04)] placeholder:text-[#6B7280] transition focus:border-[#C9A14A] focus:bg-white focus:ring-[#C9A14A]',
+    'buttonClass' => 'absolute right-2 top-2 inline-flex h-10 w-12 items-center justify-center rounded-md bg-[#111111] text-white transition hover:bg-[#C9A14A] hover:text-[#111111] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9A14A]',
 ])
 
 @php
@@ -49,13 +49,13 @@
             x-cloak
             x-transition
             @click.outside="close"
-            class="absolute left-0 right-0 top-full z-[70] mt-2 overflow-hidden rounded-lg border border-[#E5E1DA] bg-white shadow-2xl"
+            class="absolute left-0 right-0 top-full z-[70] mt-2 overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-2xl"
         >
-            <div x-show="loading" class="px-4 py-3 text-sm font-semibold text-[#6B6F74]">
+            <div x-show="loading" class="px-4 py-3 text-sm font-semibold text-[#6B7280]">
                 Duke kerkuar...
             </div>
 
-            <div x-show="!loading && trimmedQuery.length > 0 && suggestions.length === 0" class="px-4 py-4 text-sm font-semibold text-[#6B6F74]">
+            <div x-show="!loading && trimmedQuery.length > 0 && suggestions.length === 0" class="px-4 py-4 text-sm font-semibold text-[#6B7280]">
                 Nuk u gjet asnje produkt.
             </div>
 
@@ -65,23 +65,23 @@
                         :href="item.url"
                         @mouseenter="activeIndex = index"
                         @mousedown.prevent="go(item.url)"
-                        class="flex items-center gap-3 px-3 py-2 transition hover:bg-[#F7F5F1]"
-                        :class="{ 'bg-[#F7F5F1]': activeIndex === index }"
+                        class="flex items-center gap-3 px-3 py-2 transition hover:bg-[#F7F6F3]"
+                        :class="{ 'bg-[#F7F6F3]': activeIndex === index }"
                     >
                         <img
                             :src="item.thumbnail_url"
                             :alt="item.name"
                             width="48"
                             height="48"
-                            class="h-12 w-12 shrink-0 rounded-md border border-[#E5E1DA] bg-[#F7F5F1] object-contain"
+                            class="h-12 w-12 shrink-0 rounded-md border border-[#E5E7EB] bg-[#F7F6F3] object-contain"
                         >
                         <span class="min-w-0 flex-1">
-                            <span class="block truncate text-sm font-black text-[#17191C]" x-text="item.name"></span>
-                            <span class="mt-0.5 flex items-center gap-2 text-xs font-semibold text-[#6B6F74]">
+                            <span class="block truncate text-sm font-black text-[#111111]" x-text="item.name"></span>
+                            <span class="mt-0.5 flex items-center gap-2 text-xs font-semibold text-[#6B7280]">
                                 <span x-text="item.sku"></span>
                             </span>
                         </span>
-                        <span class="shrink-0 text-sm font-black text-[#15181B]">&euro;<span x-text="item.price"></span></span>
+                        <span class="shrink-0 text-sm font-black text-[#111111]">&euro;<span x-text="item.price"></span></span>
                     </a>
                 </template>
             </div>
@@ -89,7 +89,7 @@
             <a
                 x-show="hasMore"
                 :href="allResultsUrl"
-                class="block border-t border-[#E5E1DA] px-4 py-3 text-center text-sm font-black text-[#9A712E] transition hover:bg-[#F7F5F1] hover:text-[#15181B]"
+                class="block border-t border-[#E5E7EB] px-4 py-3 text-center text-sm font-black text-[#9A712E] transition hover:bg-[#F7F6F3] hover:text-[#111111]"
             >
                 Shiko te gjitha rezultatet
             </a>

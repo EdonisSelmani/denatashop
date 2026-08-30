@@ -1,25 +1,20 @@
-@props(['title', 'description', 'href', 'icon' => 'home', 'count' => null, 'tone' => 'dark', 'featured' => false])
+@props(['title', 'description' => null, 'href', 'icon' => 'home', 'image' => null, 'count' => null, 'tone' => 'light', 'featured' => false])
 
 <a href="{{ $href }}"
-   {{ $attributes->merge(['class' => ($featured ? 'md:col-span-2 ' : '') . 'group relative overflow-hidden rounded-lg border border-[#E1D9CB] bg-white p-5 shadow-[0_10px_30px_rgba(21,24,27,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-[#B88A3B] hover:shadow-[0_18px_45px_rgba(21,24,27,0.10)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]']) }}>
-    <div class="absolute -right-10 -top-10 h-28 w-28 rotate-45 border border-[#E5E1DA] bg-[#F7F5F1] transition group-hover:border-[#B88A3B]"></div>
-    <div class="absolute inset-x-0 top-0 h-1 bg-[#15181B] opacity-0 transition group-hover:opacity-100"></div>
-    <div class="relative flex h-full flex-col gap-5">
-        <div class="flex items-start justify-between gap-4">
-            <span class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-[#15181B] text-[#D7B16D] shadow-[0_12px_28px_rgba(21,24,27,0.16)]">
-                <x-store.icon :name="$icon" class="h-6 w-6" />
-            </span>
-            @if(! is_null($count))
-                <span class="rounded-full border border-[#E5E1DA] bg-[#F7F5F1] px-3 py-1 text-xs font-bold text-[#6B6F74]">{{ $count }} produkte</span>
-            @endif
-        </div>
-        <div>
-            <h3 class="text-xl font-black text-[#17191C]">{{ $title }}</h3>
-            <p class="mt-2 max-w-sm text-sm leading-6 text-[#6B6F74]">{{ $description }}</p>
-        </div>
-        <span class="mt-auto inline-flex items-center gap-2 text-sm font-bold text-[#9A712E]">
-            Eksploro
-            <x-store.icon name="arrow-right" class="h-4 w-4 transition group-hover:translate-x-1" />
+   {{ $attributes->merge(['class' => 'group flex min-h-[106px] items-center gap-3 overflow-hidden rounded-xl border border-[#E5E7EB] bg-white p-3 shadow-[0_8px_22px_rgba(17,17,17,0.035)] transition duration-200 hover:-translate-y-0.5 hover:border-[#C9A14A] hover:shadow-[0_14px_30px_rgba(17,17,17,0.07)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9A14A]']) }}>
+    <div class="flex h-20 w-[38%] shrink-0 items-center justify-center rounded-lg bg-[#F7F6F3]">
+        @if($image)
+            <img src="{{ $image }}" alt="{{ $title }}" width="112" height="88" loading="lazy" class="h-full w-full object-contain p-1.5 transition duration-200 group-hover:scale-[1.03]">
+        @else
+            <x-store.icon :name="$icon" class="h-8 w-8 text-[#C9A14A]" />
+        @endif
+    </div>
+
+    <div class="min-w-0 flex-1">
+        <h3 class="truncate text-sm font-black text-[#111111] xl:text-base">{{ $title }}</h3>
+        <span class="mt-2 inline-flex max-w-full items-center gap-1.5 whitespace-nowrap text-xs font-bold text-[#111111]">
+            Shiko më shumë
+            <x-store.icon name="arrow-right" class="h-3.5 w-3.5 shrink-0 text-[#9A712E] transition group-hover:translate-x-1" />
         </span>
     </div>
 </a>

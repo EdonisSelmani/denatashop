@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Denata Shop - Produkte per shtepi, pune dhe kopsht')
-@section('meta_description', 'Denata Shop ofron produkte sanitare, vegla pune, vegla kopshti dhe elektrike me katalog te perditesuar.')
+@section('title', 'Denata Shop - Produkte për shtëpi, punë dhe kopsht')
+@section('meta_description', 'Denata Shop ofron produkte sanitare, vegla pune, vegla kopshti dhe elektronike me katalog të përditësuar.')
 
 @section('content')
 @php
@@ -13,156 +13,110 @@
         });
     };
 
-    $sanitaryCategory = $findCategory(['tusha', 'sanitari', 'ujesjelles']);
+    $sanitaryCategory = $findCategory(['tusha', 'sanitari']);
     $toolsCategory = $findCategory(['vegla pune']);
     $gardenCategory = $findCategory(['vegla kopshti']);
     $electricCategory = $findCategory(['elektr', 'elektronike']);
-    $batteryParent = $categoryCollection->first(fn ($category) => $category->subcategories->contains(fn ($subcategory) => $lowerName($subcategory)->contains('bateria')));
-    $batterySubcategory = $batteryParent?->subcategories->first(fn ($subcategory) => $lowerName($subcategory)->contains('bateria'));
+    $plumbingCategory = $findCategory(['ujesjelles']);
+
+    $assetThumb = fn ($path) => asset('storage/product-thumbs/' . $path);
+
     $categoryCards = collect([
         [
             'title' => 'Sanitari',
-            'description' => 'Bateri, lidhese dhe produkte per instalime te rregullta ne shtepi.',
             'icon' => 'tap',
+            'image' => $assetThumb('products/bateria/BAT001.webp'),
             'href' => $sanitaryCategory ? route('category.show', $sanitaryCategory->slug) : route('shop', ['search' => 'sanitari']),
-            'count' => $sanitaryCategory?->active_products_count,
-            'featured' => true,
         ],
         [
             'title' => 'Vegla Pune',
-            'description' => 'Mjete te forta per punetori, montim dhe riparime te perditshme.',
             'icon' => 'wrench',
-            'href' => $toolsCategory ? route('category.show', $toolsCategory->slug) : route('shop', ['search' => 'vegla']),
-            'count' => $toolsCategory?->active_products_count,
-            'featured' => false,
+            'image' => $assetThumb('products/vs/MJETE-PUNE-VS-ZHWE-VS/21346.webp'),
+            'href' => $toolsCategory ? route('category.show', $toolsCategory->slug) : route('shop', ['search' => 'vegla pune']),
         ],
         [
             'title' => 'Vegla Kopshti',
-            'description' => 'Zgjidhje praktike per oborr, kopsht dhe mirembajtje.',
             'icon' => 'leaf',
-            'href' => $gardenCategory ? route('category.show', $gardenCategory->slug) : route('shop', ['search' => 'kopsht']),
-            'count' => $gardenCategory?->active_products_count,
-            'featured' => false,
+            'image' => $assetThumb('products/vs/MJETE-PUNE-VS/22238.webp'),
+            'href' => $gardenCategory ? route('category.show', $gardenCategory->slug) : route('shop', ['search' => 'vegla kopshti']),
         ],
         [
-            'title' => 'Elektrike',
-            'description' => 'Pajisje dhe aksesore elektrike per perdorim te sigurt.',
+            'title' => 'Elektronike',
             'icon' => 'bolt',
-            'href' => $electricCategory ? route('category.show', $electricCategory->slug) : route('shop', ['search' => 'elektrike']),
-            'count' => $electricCategory?->active_products_count,
-            'featured' => false,
+            'image' => $assetThumb('products/vs/MJETE-PUNE-VS/21457.webp'),
+            'href' => $electricCategory ? route('category.show', $electricCategory->slug) : route('shop', ['search' => 'elektronike']),
         ],
         [
-            'title' => 'Bateri',
-            'description' => 'Bateri dhe produkte te lidhura per banjo, kuzhine dhe lavaman.',
-            'icon' => 'battery',
-            'href' => $batterySubcategory ? route('shop', ['category' => $batteryParent?->slug, 'subcategory' => $batterySubcategory->slug]) : route('shop', ['search' => 'bateri']),
-            'count' => null,
-            'featured' => false,
+            'title' => 'Ujësjellës',
+            'icon' => 'tap',
+            'image' => $assetThumb('products/bateria/BAT090.webp'),
+            'href' => $plumbingCategory ? route('category.show', $plumbingCategory->slug) : route('shop', ['search' => 'ujesjelles']),
         ],
     ]);
-    $heroProducts = ($featuredProducts->count() ? $featuredProducts : $newProducts)->take(3)->values();
+
+    $heroImage = asset('images/denata-home-hero-products.png');
+
     $sections = collect([
-        ['title' => 'Produkte te rekomanduara', 'subtitle' => 'Zgjedhje te forta per pune te perditshme.', 'products' => $featuredProducts, 'badge' => 'Zgjedhur', 'href' => route('shop')],
-        ['title' => 'Me te kerkuarat', 'subtitle' => 'Produkte qe vizitohen dhe shtohen shpesh ne shporte.', 'products' => $bestSellers, 'badge' => null, 'href' => route('shop', ['sort' => 'latest'])],
-        ['title' => 'Oferta te zgjedhura', 'subtitle' => 'Cmimet me zbritje shfaqen vetem kur ka zbritje reale.', 'products' => $discountProducts, 'badge' => null, 'href' => route('shop')],
-        ['title' => 'Produkte te reja', 'subtitle' => 'Artikujt e fundit te shtuar ne katalog.', 'products' => $newProducts, 'badge' => 'E re', 'href' => route('shop', ['sort' => 'latest'])],
+        ['title' => 'Produkte të rekomanduara', 'subtitle' => 'Zgjedhje të forta për punë të përditshme.', 'products' => $featuredProducts, 'badge' => 'Zgjedhur', 'href' => route('shop')],
+        ['title' => 'Më të kërkuarat', 'subtitle' => 'Produkte që vizitohen dhe shtohen shpesh në shportë.', 'products' => $bestSellers, 'badge' => null, 'href' => route('shop', ['sort' => 'latest'])],
+        ['title' => 'Oferta të zgjedhura', 'subtitle' => 'Çmimet me zbritje shfaqen vetëm kur ka zbritje reale.', 'products' => $discountProducts, 'badge' => null, 'href' => route('shop')],
+        ['title' => 'Produkte të reja', 'subtitle' => 'Artikujt e fundit të shtuar në katalog.', 'products' => $newProducts, 'badge' => 'E re', 'href' => route('shop', ['sort' => 'latest'])],
     ])->filter(fn ($section) => $section['products']->count());
 @endphp
 
-<section class="relative overflow-hidden bg-[#15181B] text-white">
-    <div class="absolute inset-0 opacity-[0.08]" aria-hidden="true" style="background-image: linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px); background-size: 44px 44px;"></div>
-    <div class="container-custom relative grid gap-8 py-8 md:py-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:py-14">
-        <div class="max-w-2xl">
-            <p class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 text-xs font-black uppercase text-[#D7B16D]">
-                <x-store.icon name="home" class="h-4 w-4" />
-                Per shtepi, pune dhe kopsht
-            </p>
-            <h1 class="mt-5 text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
-                Gjithcka qe te duhet per cdo projekt
+<section class="relative overflow-hidden border-b border-[#E5E7EB] bg-[#F7F6F3]">
+    <div class="absolute inset-y-0 right-0 hidden w-[55%] lg:block" aria-hidden="true">
+        <img src="{{ $heroImage }}" alt="" width="846" height="484" loading="eager" class="h-full w-full object-cover object-center">
+        <div class="absolute inset-y-0 left-0 w-[22%] bg-gradient-to-r from-[#F7F6F3] via-[#F7F6F3]/80 to-transparent"></div>
+    </div>
+    <div class="pointer-events-none absolute right-[-18%] top-8 h-[360px] w-[360px] rounded-full bg-white/65 md:right-[-8%] lg:hidden" aria-hidden="true"></div>
+
+    <div class="container-custom relative grid min-h-[455px] gap-6 py-7 md:py-8 lg:grid-cols-[45%_55%] lg:items-center lg:py-0">
+        <div class="relative z-10 flex max-w-[560px] flex-col justify-center">
+            <h1 class="text-4xl font-black leading-[1.06] text-[#111111] sm:text-5xl lg:text-[52px] xl:text-[56px]">
+                <span class="block xl:whitespace-nowrap">Gjithçka që të duhet</span>
+                <span class="block">për çdo projekt</span>
             </h1>
-            <p class="mt-5 max-w-xl text-base leading-8 text-[#E5E1DA]">
-                Nga instalimet sanitare te veglat e punes, Denata Shop mban katalog te qarte, cmime te verifikuara dhe produkte te zgjedhura per pune qe duhet te zgjase.
+            <p class="mt-5 max-w-xl text-base leading-8 text-[#6B7280] sm:text-lg">
+                Nga instalimet sanitare te veglat e punës, Denata Shop mban katalog të qartë, çmime të verifikuara dhe produkte të zgjedhura për punë që duhet të zgjasë.
             </p>
-            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                <a href="{{ route('shop') }}" class="inline-flex items-center justify-center gap-2 rounded-md bg-[#D7B16D] px-6 py-3 font-black text-[#15181B] shadow-[0_18px_40px_rgba(215,177,109,0.24)] transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D7B16D]">
+            <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+                <a href="{{ route('shop') }}" class="inline-flex items-center justify-center gap-3 rounded-md bg-[#111111] px-7 py-4 text-base font-black text-white shadow-[0_16px_32px_rgba(17,17,17,0.16)] transition hover:bg-[#C9A14A] hover:text-[#111111] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9A14A]">
                     Shiko produktet
-                    <x-store.icon name="arrow-right" class="h-4 w-4" />
+                    <x-store.icon name="arrow-right" class="h-5 w-5" />
                 </a>
-                <a href="#kategorite" class="inline-flex items-center justify-center gap-2 rounded-md border border-white/20 bg-white/10 px-6 py-3 font-black text-white transition hover:border-[#D7B16D] hover:text-[#D7B16D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D7B16D]">
-                    Eksploro kategorite
+                <a href="#kategorite" class="inline-flex items-center justify-center rounded-md border border-[#D7D9DE] bg-white px-7 py-4 text-base font-black text-[#111111] shadow-[0_10px_24px_rgba(17,17,17,0.04)] transition hover:border-[#C9A14A] hover:text-[#9A712E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#C9A14A]">
+                    Eksploro kategoritë
                 </a>
-            </div>
-            <div class="mt-8 grid max-w-xl grid-cols-3 divide-x divide-white/10 border-y border-white/10 py-4">
-                <div class="pr-3">
-                    <p class="text-2xl font-black text-white">{{ $categoryCards->count() }}</p>
-                    <p class="mt-1 text-xs font-bold uppercase text-[#B8B0A4]">Kategorite</p>
-                </div>
-                <div class="px-3">
-                    <p class="text-2xl font-black text-white">{{ ($featuredProducts->count() + $newProducts->count()) }}</p>
-                    <p class="mt-1 text-xs font-bold uppercase text-[#B8B0A4]">Zgjedhje</p>
-                </div>
-                <div class="pl-3">
-                    <p class="text-2xl font-black text-white">{{ $discountProducts->count() }}</p>
-                    <p class="mt-1 text-xs font-bold uppercase text-[#B8B0A4]">Oferta</p>
-                </div>
             </div>
         </div>
 
-        <div class="relative min-h-[330px] md:min-h-[410px]">
-            <div class="absolute -right-4 top-4 h-[88%] w-[82%] border border-white/10 bg-white/5"></div>
-            <div class="relative grid h-full grid-cols-2 gap-3 sm:gap-4">
-                @forelse($heroProducts as $index => $product)
-                    <a href="{{ route('product.show', $product->slug) }}" class="{{ $index === 0 ? 'col-span-2 min-h-[188px] sm:min-h-[220px]' : 'min-h-[136px]' }} group rounded-lg border border-white/10 bg-white p-4 text-[#15181B] shadow-[0_24px_70px_rgba(0,0,0,0.26)] transition hover:-translate-y-0.5 hover:border-[#D7B16D]">
-                        <div class="flex h-full items-center gap-4">
-                            <img src="{{ $product->thumbnail_url }}" alt="{{ $product->name }}" width="260" height="180" class="h-full max-h-44 w-1/2 object-contain">
-                            <div class="min-w-0">
-                                <p class="text-xs font-black uppercase text-[#9A712E]">{{ $product->subcategory?->name }}</p>
-                                <h2 class="mt-2 line-clamp-3 text-base font-black text-[#15181B]">{{ $product->name }}</h2>
-                                <p class="mt-2 text-lg font-black text-[#15181B]">&euro;{{ number_format((float) $product->price, 2) }}</p>
-                            </div>
-                        </div>
-                    </a>
-                @empty
-                    <div class="col-span-2 flex min-h-[320px] items-center justify-center rounded-lg border border-dashed border-white/25 bg-white/[0.08]">
-                        <p class="text-sm font-semibold text-[#E5E1DA]">Produktet do te shfaqen ketu sapo katalogu te kete te dhena.</p>
-                    </div>
-                @endforelse
-            </div>
+        <div class="relative z-10 mx-auto w-full max-w-[760px] lg:hidden" aria-label="Koleksion produktesh Denata Shop">
+            <img src="{{ $heroImage }}" alt="Bateri, vegla pune, karrocë, ndriçim dhe aksesorë ujësjellësi Denata Shop" width="846" height="484" loading="eager" class="-mx-4 mt-2 h-auto w-[calc(100%+2rem)] max-w-none object-cover">
         </div>
     </div>
 </section>
 
-<section id="kategorite" class="container-custom py-10 md:py-12">
-    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-            <p class="text-sm font-black uppercase text-[#9A712E]">Kategorite kryesore</p>
-            <h2 class="mt-2 text-3xl font-black text-[#15181B]">Katalog i organizuar per pune reale</h2>
+<section id="kategorite" class="bg-white py-5 md:py-6">
+    <div class="container-custom">
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            @foreach($categoryCards as $card)
+                <x-store.category-card
+                    :title="$card['title']"
+                    :href="$card['href']"
+                    :icon="$card['icon']"
+                    :image="$card['image']" />
+            @endforeach
         </div>
-        <a href="{{ route('shop') }}" class="inline-flex items-center gap-2 text-sm font-bold text-[#9A712E] hover:text-[#15181B]">
-            Shiko te gjitha
-            <x-store.icon name="arrow-right" class="h-4 w-4" />
-        </a>
-    </div>
-    <div class="grid gap-4 md:grid-cols-3">
-        @foreach($categoryCards as $card)
-            <x-store.category-card
-                :title="$card['title']"
-                :description="$card['description']"
-                :href="$card['href']"
-                :icon="$card['icon']"
-                :count="$card['count']"
-                :featured="$card['featured']" />
-        @endforeach
     </div>
 </section>
 
-<section class="container-custom py-6">
+<section class="container-custom py-8 md:py-10">
     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <x-store.trust-item icon="shield" title="Produkte cilesore" text="Artikuj te zgjedhur per perdorim ne shtepi, punetori dhe instalime." />
-        <x-store.trust-item icon="truck" title="Dergese ne Kosove" text="Porosite pergatiten me kujdes dhe dergohen ne qytetet e Kosoves." />
-        <x-store.trust-item icon="lock" title="Pagese e sigurt" text="Proces i qarte porosie dhe ruajtje e kujdesshme e te dhenave." />
-        <x-store.trust-item icon="headset" title="Mbeshtetje per kliente" text="Ndihme per zgjedhjen e produktit dhe informata rreth disponueshmerise." />
+        <x-store.trust-item icon="shield" title="Produkte cilësore" text="Artikuj të zgjedhur për përdorim në shtëpi, punëtori dhe instalime." />
+        <x-store.trust-item icon="truck" title="Dërgesë në Kosovë" text="Porositë përgatiten me kujdes dhe dërgohen në qytetet e Kosovës." />
+        <x-store.trust-item icon="lock" title="Pagesë e sigurt" text="Proces i qartë porosie dhe ruajtje e kujdesshme e të dhënave." />
+        <x-store.trust-item icon="headset" title="Mbështetje për klientë" text="Ndihmë për zgjedhjen e produktit dhe informata rreth disponueshmërisë." />
     </div>
 </section>
 
@@ -170,11 +124,11 @@
     <section class="container-custom py-9">
         <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <h2 class="text-2xl font-black text-[#15181B]">{{ $section['title'] }}</h2>
-                <p class="mt-1 text-sm text-[#6B6F74]">{{ $section['subtitle'] }}</p>
+                <h2 class="text-2xl font-black text-[#111111]">{{ $section['title'] }}</h2>
+                <p class="mt-1 text-sm text-[#6B7280]">{{ $section['subtitle'] }}</p>
             </div>
-            <a href="{{ $section['href'] }}" class="inline-flex items-center gap-2 text-sm font-bold text-[#9A712E] hover:text-[#15181B]">
-                Shiko me shume
+            <a href="{{ $section['href'] }}" class="inline-flex items-center gap-2 text-sm font-bold text-[#9A712E] hover:text-[#111111]">
+                Shiko më shumë
                 <x-store.icon name="arrow-right" class="h-4 w-4" />
             </a>
         </div>
@@ -188,17 +142,17 @@
 @endforeach
 
 <section class="container-custom py-12">
-    <div class="overflow-hidden rounded-lg border border-[#2A2D31] bg-[#15181B] p-6 text-white shadow-[0_28px_80px_rgba(21,24,27,0.16)] sm:p-8 lg:p-10">
+    <div class="overflow-hidden rounded-lg border border-[#E5E7EB] bg-white p-6 shadow-[0_18px_50px_rgba(17,17,17,0.06)] sm:p-8 lg:p-10">
         <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
-                <p class="text-sm font-black uppercase text-[#D7B16D]">Denata Shop</p>
-                <h2 class="mt-2 text-3xl font-black">Partneri yt per shtepi dhe pune</h2>
-                <p class="mt-4 max-w-3xl leading-8 text-[#E5E1DA]">
-                    Denata Shop sjell produkte te zgjedhura per instalime sanitare, vegla pune, kopsht dhe elektrike, me fokus ne cilesi dhe sherbim te besueshem.
+                <p class="text-sm font-black uppercase text-[#9A712E]">Denata Shop</p>
+                <h2 class="mt-2 text-3xl font-black text-[#111111]">Partneri yt për shtëpi dhe punë</h2>
+                <p class="mt-4 max-w-3xl leading-8 text-[#6B7280]">
+                    Denata Shop sjell produkte të zgjedhura për instalime sanitare, vegla pune, kopsht dhe elektronike, me fokus në cilësi dhe shërbim të besueshëm.
                 </p>
             </div>
-            <a href="{{ route('shop') }}" class="inline-flex items-center justify-center gap-2 rounded-md bg-white px-5 py-3 text-sm font-black text-[#15181B] transition hover:bg-[#D7B16D]">
-                Hyr ne dyqan
+            <a href="{{ route('shop') }}" class="inline-flex items-center justify-center gap-2 rounded-md bg-[#111111] px-5 py-3 text-sm font-black text-white transition hover:bg-[#C9A14A] hover:text-[#111111]">
+                Hyr në dyqan
                 <x-store.icon name="arrow-right" class="h-4 w-4" />
             </a>
         </div>
