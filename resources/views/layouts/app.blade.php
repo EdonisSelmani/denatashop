@@ -4,14 +4,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="@yield('meta_description', 'Denata Shop sjell produkte te zgjedhura per sanitari, vegla pune, kopsht dhe elektrike.')">
+    <meta name="description" content="@yield('meta_description', 'Denata Shop sjell produkte te zgjedhura per shtepi, pune dhe kopsht.')">
     <link rel="canonical" href="@yield('canonical', url()->current())">
-    <meta property="og:title" content="@yield('title', 'Denata Shop')">
-    <meta property="og:description" content="@yield('meta_description', 'Denata Shop sjell produkte te zgjedhura per sanitari, vegla pune, kopsht dhe elektrike.')">
+    <meta property="og:title" content="@yield('title', 'Denata Shop - Produkte per shtepi, pune dhe kopsht')">
+    <meta property="og:description" content="@yield('meta_description', 'Denata Shop sjell produkte te zgjedhura per shtepi, pune dhe kopsht.')">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:url" content="@yield('canonical', url()->current())">
-    <title>@yield('title', 'Denata Shop')</title>
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <title>@yield('title', 'Denata Shop - Produkte per shtepi, pune dhe kopsht')</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ asset('site.webmanifest') }}">
+    <meta name="theme-color" content="#15181B">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 

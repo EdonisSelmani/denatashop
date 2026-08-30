@@ -17,7 +17,6 @@
 
     <aside
            x-show="mobileOpen"
-           @click.outside="mobileOpen = false"
            class="absolute right-0 top-0 flex h-[100dvh] w-[90vw] max-w-[420px] flex-col overflow-y-auto overflow-x-hidden bg-[#F7F5F1] shadow-2xl"
            style="padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);"
            x-transition:enter="transition ease-out duration-200"
@@ -27,8 +26,12 @@
            x-transition:leave-start="translate-x-0"
            x-transition:leave-end="translate-x-full">
         <div class="flex items-center justify-between border-b border-[#E5E1DA] bg-white px-4 py-3">
-            <a href="{{ route('home') }}" class="focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]" aria-label="Denata Shop">
-                <img src="{{ asset('images/denata-shop-logo-web.png') }}" alt="Denata Shop" class="h-[42px] w-auto object-contain">
+            <a href="{{ route('home') }}" class="flex items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]" aria-label="Denata Shop">
+                <img src="{{ asset('images/denata-shop-logo-web.png') }}" alt="Denata Shop" class="h-10 w-auto object-contain">
+                <span class="leading-none">
+                    <span class="block text-sm font-black uppercase text-[#15181B]">Denata</span>
+                    <span class="block text-[10px] font-bold uppercase text-[#9A712E]">Shop</span>
+                </span>
             </a>
             <button type="button"
                     class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#E5E1DA] text-[#15181B] transition hover:border-[#B88A3B] hover:text-[#B88A3B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]"
@@ -42,6 +45,7 @@
             <x-store.search-autocomplete
                 id="mobile-store-search"
                 placeholder="Kerko produkte ose SKU"
+                box-class="relative"
                 input-class="w-full rounded-md border border-[#E5E1DA] bg-white py-3 pl-4 pr-12 text-sm text-[#17191C] placeholder:text-[#6B6F74] focus:border-[#B88A3B] focus:ring-[#B88A3B]"
                 button-class="absolute right-1.5 top-1.5 inline-flex h-9 w-9 items-center justify-center rounded-md bg-[#15181B] text-white transition hover:bg-[#B88A3B]"
             />

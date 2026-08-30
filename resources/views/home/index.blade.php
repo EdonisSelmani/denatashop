@@ -70,37 +70,50 @@
     ])->filter(fn ($section) => $section['products']->count());
 @endphp
 
-<section class="relative overflow-hidden bg-[#F7F5F1]">
-    <div class="absolute inset-x-0 top-0 h-px bg-[#E5E1DA]"></div>
-    <div class="container-custom grid gap-10 py-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:py-14">
+<section class="relative overflow-hidden bg-[#15181B] text-white">
+    <div class="absolute inset-0 opacity-[0.08]" aria-hidden="true" style="background-image: linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px); background-size: 44px 44px;"></div>
+    <div class="container-custom relative grid gap-8 py-8 md:py-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:py-14">
         <div class="max-w-2xl">
-            <p class="inline-flex items-center gap-2 rounded-full border border-[#D8D1C6] bg-white px-4 py-2 text-xs font-black uppercase text-[#9A712E]">
+            <p class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 text-xs font-black uppercase text-[#D7B16D]">
                 <x-store.icon name="home" class="h-4 w-4" />
                 Per shtepi, pune dhe kopsht
             </p>
-            <h1 class="mt-5 text-4xl font-black leading-tight text-[#15181B] sm:text-5xl lg:text-6xl">
+            <h1 class="mt-5 text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
                 Gjithcka qe te duhet per cdo projekt
             </h1>
-            <p class="mt-5 max-w-xl text-base leading-8 text-[#6B6F74]">
+            <p class="mt-5 max-w-xl text-base leading-8 text-[#E5E1DA]">
                 Nga instalimet sanitare te veglat e punes, Denata Shop mban katalog te qarte, cmime te verifikuara dhe produkte te zgjedhura per pune qe duhet te zgjase.
             </p>
             <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                <a href="{{ route('shop') }}" class="btn-primary inline-flex items-center justify-center gap-2">
+                <a href="{{ route('shop') }}" class="inline-flex items-center justify-center gap-2 rounded-md bg-[#D7B16D] px-6 py-3 font-black text-[#15181B] shadow-[0_18px_40px_rgba(215,177,109,0.24)] transition hover:bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D7B16D]">
                     Shiko produktet
                     <x-store.icon name="arrow-right" class="h-4 w-4" />
                 </a>
-                <a href="#kategorite" class="btn-secondary inline-flex items-center justify-center gap-2">
+                <a href="#kategorite" class="inline-flex items-center justify-center gap-2 rounded-md border border-white/20 bg-white/10 px-6 py-3 font-black text-white transition hover:border-[#D7B16D] hover:text-[#D7B16D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D7B16D]">
                     Eksploro kategorite
                 </a>
             </div>
+            <div class="mt-8 grid max-w-xl grid-cols-3 divide-x divide-white/10 border-y border-white/10 py-4">
+                <div class="pr-3">
+                    <p class="text-2xl font-black text-white">{{ $categoryCards->count() }}</p>
+                    <p class="mt-1 text-xs font-bold uppercase text-[#B8B0A4]">Kategorite</p>
+                </div>
+                <div class="px-3">
+                    <p class="text-2xl font-black text-white">{{ ($featuredProducts->count() + $newProducts->count()) }}</p>
+                    <p class="mt-1 text-xs font-bold uppercase text-[#B8B0A4]">Zgjedhje</p>
+                </div>
+                <div class="pl-3">
+                    <p class="text-2xl font-black text-white">{{ $discountProducts->count() }}</p>
+                    <p class="mt-1 text-xs font-bold uppercase text-[#B8B0A4]">Oferta</p>
+                </div>
+            </div>
         </div>
 
-        <div class="relative min-h-[360px] overflow-hidden rounded-lg border border-[#E5E1DA] bg-white p-5 shadow-[0_24px_70px_rgba(21,24,27,0.08)]">
-            <div class="absolute right-8 top-8 h-24 w-24 rotate-45 border border-[#D8D1C6]"></div>
-            <div class="absolute bottom-6 left-8 h-20 w-20 rotate-45 bg-[#B88A3B]/10"></div>
-            <div class="relative grid h-full grid-cols-2 gap-4">
+        <div class="relative min-h-[330px] md:min-h-[410px]">
+            <div class="absolute -right-4 top-4 h-[88%] w-[82%] border border-white/10 bg-white/5"></div>
+            <div class="relative grid h-full grid-cols-2 gap-3 sm:gap-4">
                 @forelse($heroProducts as $index => $product)
-                    <a href="{{ route('product.show', $product->slug) }}" class="{{ $index === 0 ? 'col-span-2 min-h-[190px]' : 'min-h-[132px]' }} group rounded-lg border border-[#E5E1DA] bg-[#F7F5F1] p-4 transition hover:border-[#B88A3B]">
+                    <a href="{{ route('product.show', $product->slug) }}" class="{{ $index === 0 ? 'col-span-2 min-h-[188px] sm:min-h-[220px]' : 'min-h-[136px]' }} group rounded-lg border border-white/10 bg-white p-4 text-[#15181B] shadow-[0_24px_70px_rgba(0,0,0,0.26)] transition hover:-translate-y-0.5 hover:border-[#D7B16D]">
                         <div class="flex h-full items-center gap-4">
                             <img src="{{ $product->thumbnail_url }}" alt="{{ $product->name }}" width="260" height="180" class="h-full max-h-44 w-1/2 object-contain">
                             <div class="min-w-0">
@@ -111,8 +124,8 @@
                         </div>
                     </a>
                 @empty
-                    <div class="col-span-2 flex min-h-[320px] items-center justify-center rounded-lg border border-dashed border-[#D8D1C6]">
-                        <p class="text-sm font-semibold text-[#6B6F74]">Produktet do te shfaqen ketu sapo katalogu te kete te dhena.</p>
+                    <div class="col-span-2 flex min-h-[320px] items-center justify-center rounded-lg border border-dashed border-white/25 bg-white/[0.08]">
+                        <p class="text-sm font-semibold text-[#E5E1DA]">Produktet do te shfaqen ketu sapo katalogu te kete te dhena.</p>
                     </div>
                 @endforelse
             </div>
@@ -120,7 +133,7 @@
     </div>
 </section>
 
-<section id="kategorite" class="container-custom py-10">
+<section id="kategorite" class="container-custom py-10 md:py-12">
     <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
             <p class="text-sm font-black uppercase text-[#9A712E]">Kategorite kryesore</p>
@@ -166,7 +179,7 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             @foreach($section['products'] as $product)
                 <x-store.product-card :product="$product" :badge="$section['badge']" />
             @endforeach
@@ -175,7 +188,7 @@
 @endforeach
 
 <section class="container-custom py-12">
-    <div class="overflow-hidden rounded-lg border border-[#E5E1DA] bg-[#15181B] p-6 text-white sm:p-8 lg:p-10">
+    <div class="overflow-hidden rounded-lg border border-[#2A2D31] bg-[#15181B] p-6 text-white shadow-[0_28px_80px_rgba(21,24,27,0.16)] sm:p-8 lg:p-10">
         <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
                 <p class="text-sm font-black uppercase text-[#D7B16D]">Denata Shop</p>

@@ -3,33 +3,33 @@
 @section('title', 'Lista e deshirave - Denata Shop')
 
 @section('content')
-<div class="container-custom py-8">
+<div class="container-custom py-6 md:py-8">
     <nav class="mb-5 flex items-center gap-2 text-sm text-[#6B6F74]" aria-label="Breadcrumb">
         <a href="{{ route('home') }}" class="hover:text-[#9A712E]">Ballina</a>
         <span>/</span>
         <span class="font-semibold text-[#15181B]">Lista e deshirave</span>
     </nav>
 
-    <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="mb-8 rounded-lg border border-[#2A2D31] bg-[#15181B] p-6 text-white shadow-[0_24px_70px_rgba(21,24,27,0.12)] sm:flex sm:items-end sm:justify-between sm:gap-4">
         <div>
-            <p class="text-sm font-black uppercase text-[#9A712E]">Produktet e ruajtura</p>
-            <h1 class="mt-2 text-3xl font-black text-[#15181B]">Lista e deshirave</h1>
-            <p class="mt-2 text-sm text-[#6B6F74]">{{ $wishlistItems->count() }} produkte te ruajtura.</p>
+            <p class="text-sm font-black uppercase text-[#D7B16D]">Produktet e ruajtura</p>
+            <h1 class="mt-2 text-3xl font-black text-white md:text-4xl">Lista e deshirave</h1>
+            <p class="mt-2 text-sm text-[#D8D1C6]">{{ $wishlistItems->count() }} produkte te ruajtura.</p>
         </div>
-        <a href="{{ route('shop') }}" class="btn-secondary inline-flex items-center justify-center gap-2">
+        <a href="{{ route('shop') }}" class="mt-4 inline-flex items-center justify-center gap-2 rounded-md border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white transition hover:border-[#D7B16D] hover:text-[#D7B16D] sm:mt-0">
             Shiko katalogun
             <x-store.icon name="arrow-right" class="h-4 w-4" />
         </a>
     </div>
 
     @if($wishlistItems->count())
-        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             @foreach($wishlistItems as $product)
                 @php
                     $hasDiscount = $product->compare_price && (float) $product->compare_price > (float) $product->price;
                     $discount = $hasDiscount ? round(((float) $product->compare_price - (float) $product->price) / (float) $product->compare_price * 100) : null;
                 @endphp
-                <article class="wishlist-item group flex h-full flex-col overflow-hidden rounded-lg border border-[#E5E1DA] bg-white transition hover:-translate-y-0.5 hover:shadow-[0_18px_45px_rgba(21,24,27,0.10)]" data-product-id="{{ $product->id }}">
+                <article class="wishlist-item group flex h-full flex-col overflow-hidden rounded-lg border border-[#E1D9CB] bg-white shadow-[0_10px_28px_rgba(21,24,27,0.04)] transition hover:-translate-y-0.5 hover:border-[#B88A3B] hover:shadow-[0_18px_45px_rgba(21,24,27,0.10)]" data-product-id="{{ $product->id }}">
                     <div class="relative border-b border-[#E5E1DA] bg-[#F7F5F1]">
                         <a href="{{ route('product.show', $product->slug) }}" class="flex aspect-[4/3] items-center justify-center p-4">
                             <img src="{{ $product->thumbnail_url }}" alt="{{ $product->name }}" loading="lazy" decoding="async" width="320" height="240" class="h-full w-full object-contain transition group-hover:scale-[1.03]">

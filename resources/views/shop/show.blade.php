@@ -10,9 +10,10 @@
     $discount = $hasDiscount ? round(((float) $product->compare_price - (float) $product->price) / (float) $product->compare_price * 100) : null;
     $gallery = collect($product->gallery ?? [])->filter()->values();
     $isFavorited = in_array($product->id, $wishlistProductIds ?? [], true);
+    $specifications = collect($product->attributes ?? [])->filter(fn ($value, $key) => filled($key) && filled($value));
 @endphp
 
-<div class="container-custom py-8">
+<div class="container-custom py-6 md:py-8">
     <nav class="mb-5 flex flex-wrap items-center gap-2 text-sm text-[#6B6F74]" aria-label="Breadcrumb">
         <a href="{{ route('home') }}" class="hover:text-[#9A712E]">Ballina</a>
         <span>/</span>
@@ -25,15 +26,15 @@
         <span class="font-semibold text-[#15181B]">{{ Str::limit($product->name, 42) }}</span>
     </nav>
 
-    <div class="grid gap-8 lg:grid-cols-[1.08fr_0.92fr]">
+    <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
         <section x-data="{ image: @js($product->image_url) }" class="space-y-4">
-            <div class="relative rounded-lg border border-[#E5E1DA] bg-white p-4">
+            <div class="relative overflow-hidden rounded-lg border border-[#E1D9CB] bg-white p-4 shadow-[0_24px_70px_rgba(21,24,27,0.08)]">
                 @if($hasDiscount)
-                    <span class="absolute left-5 top-5 rounded-full bg-[#C9473D] px-3 py-1 text-xs font-black text-white">
+                    <span class="absolute left-5 top-5 z-10 rounded-full bg-[#C9473D] px-3 py-1 text-xs font-black text-white shadow-sm">
                         -{{ $discount }}%
                     </span>
                 @endif
-                <div class="flex aspect-square items-center justify-center rounded-md bg-[#F7F5F1] p-6">
+                <div class="flex aspect-square items-center justify-center rounded-md bg-[#F7F5F1] p-5 md:p-8">
                     <img :src="image"
                          src="{{ $product->image_url }}"
                          alt="{{ $product->name }}"
@@ -46,11 +47,11 @@
 
             @if($gallery->count())
                 <div class="grid grid-cols-4 gap-3 sm:grid-cols-6">
-                    <button type="button" @click="image = @js($product->image_url)" class="rounded-md border border-[#B88A3B] bg-white p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]">
+                    <button type="button" @click="image = @js($product->image_url)" class="rounded-md border border-[#B88A3B] bg-white p-2 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]">
                         <img src="{{ $product->thumbnail_url }}" alt="{{ $product->name }}" class="aspect-square w-full object-contain">
                     </button>
                     @foreach($gallery as $image)
-                        <button type="button" @click="image = @js(asset('storage/' . $image))" class="rounded-md border border-[#E5E1DA] bg-white p-2 transition hover:border-[#B88A3B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]">
+                        <button type="button" @click="image = @js(asset('storage/' . $image))" class="rounded-md border border-[#E5E1DA] bg-white p-2 shadow-sm transition hover:border-[#B88A3B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]">
                             <img src="{{ asset('storage/' . $image) }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="aspect-square w-full object-contain">
                         </button>
                     @endforeach
@@ -59,7 +60,7 @@
         </section>
 
         <aside class="lg:sticky lg:top-36 lg:self-start">
-            <div class="rounded-lg border border-[#E5E1DA] bg-white p-6">
+            <div class="rounded-lg border border-[#E1D9CB] bg-white p-5 shadow-[0_18px_55px_rgba(21,24,27,0.08)] md:p-6">
                 <div class="flex flex-wrap items-center gap-2 text-sm font-bold text-[#6B6F74]">
                     @if($product->subcategory?->category)
                         <a href="{{ route('category.show', $product->subcategory->category->slug) }}" class="text-[#9A712E] hover:text-[#15181B]">{{ $product->subcategory->category->name }}</a>
@@ -68,8 +69,11 @@
                     <span>{{ $product->subcategory?->name }}</span>
                 </div>
 
-                <h1 class="mt-3 text-3xl font-black leading-tight text-[#15181B]">{{ $product->name }}</h1>
-                <p class="mt-3 text-sm font-semibold text-[#6B6F74]">SKU: <span class="text-[#22272B]">{{ $product->sku }}</span></p>
+                <h1 class="mt-3 text-3xl font-black leading-tight text-[#15181B] md:text-4xl">{{ $product->name }}</h1>
+                <div class="mt-4 flex flex-wrap gap-2 text-xs font-black uppercase">
+                    <span class="rounded-full border border-[#E5E1DA] bg-[#F7F5F1] px-3 py-1 text-[#6B6F74]">SKU: {{ $product->sku }}</span>
+                    <span class="rounded-full px-3 py-1 {{ $product->stock > 0 ? 'bg-[#25865A]/10 text-[#25865A]' : 'bg-[#C9473D]/10 text-[#C9473D]' }}">{{ $product->stock > 0 ? 'Ne stok' : 'Nuk ka stok' }}</span>
+                </div>
 
                 <div class="mt-6 border-y border-[#E5E1DA] py-5">
                     <div class="flex flex-wrap items-end gap-3">
@@ -77,14 +81,9 @@
                         @if($hasDiscount)
                             <span class="pb-1 text-lg text-[#6B6F74] line-through">&euro;{{ number_format((float) $product->compare_price, 2) }}</span>
                             <span class="mb-1 rounded-full bg-[#C9473D]/10 px-3 py-1 text-sm font-black text-[#C9473D]">
-                                Kurseni &euro;{{ number_format((float) $product->compare_price - (float) $product->price, 2) }}
+                                -{{ $discount }}% / Kurseni &euro;{{ number_format((float) $product->compare_price - (float) $product->price, 2) }}
                             </span>
                         @endif
-                    </div>
-
-                    <div class="mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-sm font-black {{ $product->stock > 0 ? 'bg-[#25865A]/10 text-[#25865A]' : 'bg-[#C9473D]/10 text-[#C9473D]' }}">
-                        <span class="h-2 w-2 rounded-full {{ $product->stock > 0 ? 'bg-[#25865A]' : 'bg-[#C9473D]' }}"></span>
-                        {{ $product->stock > 0 ? 'Ne stok: ' . $product->stock : 'Nuk ka stok' }}
                     </div>
                 </div>
 
@@ -131,17 +130,38 @@
                 </div>
 
                 <div class="mt-6 grid gap-3 text-sm text-[#6B6F74] sm:grid-cols-3">
-                    <div class="rounded-md bg-[#F7F5F1] p-3"><x-store.icon name="shield" class="mb-2 h-5 w-5 text-[#B88A3B]" /> Produkt i kontrolluar</div>
-                    <div class="rounded-md bg-[#F7F5F1] p-3"><x-store.icon name="truck" class="mb-2 h-5 w-5 text-[#B88A3B]" /> Dergese ne Kosove</div>
-                    <div class="rounded-md bg-[#F7F5F1] p-3"><x-store.icon name="headset" class="mb-2 h-5 w-5 text-[#B88A3B]" /> Mbeshtetje per porosi</div>
+                    <div class="rounded-md border border-[#E5E1DA] bg-[#F7F5F1] p-3"><x-store.icon name="shield" class="mb-2 h-5 w-5 text-[#B88A3B]" /> Produkt i kontrolluar</div>
+                    <div class="rounded-md border border-[#E5E1DA] bg-[#F7F5F1] p-3"><x-store.icon name="truck" class="mb-2 h-5 w-5 text-[#B88A3B]" /> Dergese ne Kosove</div>
+                    <div class="rounded-md border border-[#E5E1DA] bg-[#F7F5F1] p-3"><x-store.icon name="headset" class="mb-2 h-5 w-5 text-[#B88A3B]" /> Mbeshtetje per porosi</div>
                 </div>
             </div>
         </aside>
     </div>
 
-    <section class="mt-10 rounded-lg border border-[#E5E1DA] bg-white p-6">
-        <h2 class="text-2xl font-black text-[#15181B]">Pershkrimi</h2>
-        <p class="mt-4 leading-8 text-[#6B6F74]">{{ $product->description }}</p>
+    <section class="mt-10 grid gap-5 lg:grid-cols-[1fr_0.78fr]">
+        <div class="rounded-lg border border-[#E1D9CB] bg-white p-6 shadow-[0_12px_34px_rgba(21,24,27,0.05)]">
+            <h2 class="text-2xl font-black text-[#15181B]">Pershkrimi</h2>
+            <p class="mt-4 leading-8 text-[#6B6F74]">{{ $product->description }}</p>
+        </div>
+
+        @if($specifications->count())
+            <div class="rounded-lg border border-[#E1D9CB] bg-white p-6 shadow-[0_12px_34px_rgba(21,24,27,0.05)]">
+                <h2 class="text-2xl font-black text-[#15181B]">Specifikimet</h2>
+                <dl class="mt-4 divide-y divide-[#E5E1DA]">
+                    @foreach($specifications as $key => $value)
+                        @php
+                            $specValue = is_array($value)
+                                ? collect($value)->map(fn ($item) => is_scalar($item) ? $item : json_encode($item))->implode(', ')
+                                : $value;
+                        @endphp
+                        <div class="grid gap-2 py-3 sm:grid-cols-[0.45fr_1fr]">
+                            <dt class="text-sm font-black text-[#6B6F74]">{{ Str::headline((string) $key) }}</dt>
+                            <dd class="text-sm font-semibold text-[#15181B]">{{ $specValue }}</dd>
+                        </div>
+                    @endforeach
+                </dl>
+            </div>
+        @endif
     </section>
 
     @if($relatedProducts->count())

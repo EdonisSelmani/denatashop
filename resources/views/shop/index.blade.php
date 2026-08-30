@@ -25,23 +25,23 @@
     }
 @endphp
 
-<div x-data="{ filtersOpen: false }" class="container-custom py-8">
+<div x-data="{ filtersOpen: false }" class="container-custom py-6 md:py-8">
     <nav class="mb-5 flex items-center gap-2 text-sm text-[#6B6F74]" aria-label="Breadcrumb">
         <a href="{{ route('home') }}" class="hover:text-[#9A712E]">Ballina</a>
         <span>/</span>
         <span class="font-semibold text-[#15181B]">Produktet</span>
     </nav>
 
-    <div class="mb-8 rounded-lg border border-[#E5E1DA] bg-white p-5">
+    <div class="mb-6 overflow-hidden rounded-lg border border-[#E1D9CB] bg-[#15181B] p-5 text-white shadow-[0_24px_70px_rgba(21,24,27,0.12)] md:p-6">
         <div class="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-                <p class="text-sm font-black uppercase text-[#9A712E]">Katalogu</p>
-                <h1 class="mt-2 text-3xl font-black text-[#15181B]">Produkte per projektin tend</h1>
-                <p class="mt-2 text-sm text-[#6B6F74]">{{ $products->total() }} produkte aktive ne katalog.</p>
+                <p class="text-sm font-black uppercase text-[#D7B16D]">Katalogu</p>
+                <h1 class="mt-2 text-3xl font-black text-white md:text-4xl">Produkte per projektin tend</h1>
+                <p class="mt-2 text-sm text-[#D8D1C6]">{{ $products->total() }} produkte aktive ne katalog.</p>
             </div>
 
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <button type="button" @click="filtersOpen = true" class="btn-secondary inline-flex items-center justify-center gap-2 lg:hidden">
+                <button type="button" @click="filtersOpen = true" class="inline-flex items-center justify-center gap-2 rounded-md border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white transition hover:border-[#D7B16D] hover:text-[#D7B16D] lg:hidden">
                     <x-store.icon name="filter" class="h-4 w-4" />
                     Filtrat
                 </button>
@@ -52,7 +52,7 @@
                         @endif
                     @endforeach
                     <label for="sort" class="sr-only">Rendit</label>
-                    <select id="sort" name="sort" onchange="this.form.submit()" class="store-input min-w-[190px]">
+                    <select id="sort" name="sort" onchange="this.form.submit()" class="min-w-[190px] rounded-md border-white/20 bg-white px-3 py-2.5 text-sm font-bold text-[#15181B] shadow-sm focus:border-[#D7B16D] focus:ring-[#D7B16D]">
                         <option value="latest" @selected(request('sort', 'latest') === 'latest')>Me te rejat</option>
                         <option value="price_low" @selected(request('sort') === 'price_low')>Cmimi: i ulet</option>
                         <option value="price_high" @selected(request('sort') === 'price_high')>Cmimi: i larte</option>
@@ -66,31 +66,31 @@
         @if($chips->count())
             <div class="mt-5 flex flex-wrap gap-2">
                 @foreach($chips as $chip)
-                    <a href="{{ $chip['href'] }}" class="inline-flex items-center gap-2 rounded-full border border-[#D8D1C6] bg-[#F7F5F1] px-3 py-1.5 text-xs font-bold text-[#22272B] transition hover:border-[#B88A3B] hover:text-[#9A712E]">
+                    <a href="{{ $chip['href'] }}" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-white transition hover:border-[#D7B16D] hover:text-[#D7B16D]">
                         {{ $chip['label'] }}
                         <span aria-hidden="true">&times;</span>
                     </a>
                 @endforeach
-                <a href="{{ route('shop') }}" class="inline-flex items-center rounded-full bg-[#15181B] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#B88A3B]">Pastro te gjitha</a>
+                <a href="{{ route('shop') }}" class="inline-flex items-center rounded-full bg-[#D7B16D] px-3 py-1.5 text-xs font-black text-[#15181B] transition hover:bg-white">Pastro te gjitha</a>
             </div>
         @endif
     </div>
 
-    <div class="grid gap-8 lg:grid-cols-[300px_1fr]">
+    <div class="grid gap-7 lg:grid-cols-[290px_minmax(0,1fr)]">
         <aside class="hidden lg:block">
-            <div class="sticky top-36 rounded-lg border border-[#E5E1DA] bg-white p-5">
+            <div class="sticky top-36 rounded-lg border border-[#E1D9CB] bg-white p-5 shadow-[0_12px_34px_rgba(21,24,27,0.05)]">
                 @include('shop.partials.filters', ['categories' => $categories])
             </div>
         </aside>
 
-        <section aria-label="Produktet">
+        <section class="min-w-0" aria-label="Produktet">
             @include('shop.partials.product_grid', ['products' => $products])
         </section>
     </div>
 
     <div x-show="filtersOpen" x-cloak class="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
-        <div class="absolute inset-0 bg-[#15181B]/55" @click="filtersOpen = false"></div>
-        <aside class="absolute right-0 top-0 h-full w-full max-w-sm overflow-y-auto bg-[#F7F5F1] p-4 shadow-2xl">
+        <div class="absolute inset-0 bg-[#15181B]/65 backdrop-blur-sm" @click="filtersOpen = false"></div>
+        <aside class="absolute right-0 top-0 h-[100dvh] w-[90vw] max-w-[420px] overflow-y-auto bg-[#F7F5F1] p-4 shadow-2xl">
             <div class="mb-4 flex items-center justify-between">
                 <h2 class="text-lg font-black text-[#15181B]">Filtrat</h2>
                 <button type="button" @click="filtersOpen = false" class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#E5E1DA] bg-white" aria-label="Mbyll filtrat">

@@ -43,39 +43,49 @@
     x-data="{ mobileOpen: false, accountOpen: false }"
     x-effect="document.body.classList.toggle('overflow-hidden', mobileOpen)"
     @keydown.escape.window="mobileOpen = false"
-    class="sticky top-0 z-40 border-b border-[#E5E1DA] bg-white/95 shadow-[0_1px_0_rgba(21,24,27,0.04)] backdrop-blur"
+    class="sticky top-0 z-40 border-b border-[#DED6C8] bg-white/95 shadow-[0_12px_34px_rgba(21,24,27,0.07)] backdrop-blur"
 >
-    <div class="bg-[#15181B] text-white">
+    <div class="hidden bg-[#15181B] text-white md:block">
         <div class="mx-auto flex max-w-7xl items-center justify-center gap-5 px-4 py-2 text-[11px] font-semibold uppercase sm:justify-between sm:px-6 lg:px-8">
             <div class="hidden items-center gap-5 sm:flex">
                 <span class="inline-flex items-center gap-2"><x-store.icon name="truck" class="h-4 w-4 text-[#B88A3B]" /> Dergesa ne gjithe Kosoven</span>
                 <span class="inline-flex items-center gap-2"><x-store.icon name="lock" class="h-4 w-4 text-[#B88A3B]" /> Pagese e sigurt</span>
                 <span class="inline-flex items-center gap-2"><x-store.icon name="headset" class="h-4 w-4 text-[#B88A3B]" /> Mbeshtetje per porosi</span>
             </div>
-            <div class="flex items-center gap-4">
-                @guest
-                    <a href="{{ route('login') }}" class="transition hover:text-[#D7B16D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]">Hyni</a>
-                    <a href="{{ route('register') }}" class="transition hover:text-[#D7B16D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]">Regjistrohu</a>
-                @else
-                    <span class="hidden sm:inline">Pershendetje, {{ Str::limit(Auth::user()->name, 18) }}</span>
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button type="submit" class="transition hover:text-[#D7B16D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]">Dilni</button>
-                    </form>
-                @endguest
+            <div class="flex items-center gap-2 text-[#D7B16D]">
+                <x-store.icon name="home" class="h-4 w-4" />
+                <span>Per shtepi, pune dhe kopsht</span>
             </div>
         </div>
     </div>
 
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="flex min-h-[74px] items-center gap-4">
-            <a href="{{ route('home') }}" class="shrink-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]" aria-label="Denata Shop">
-                <img src="{{ asset('images/denata-shop-logo-web.png') }}" alt="Denata Shop" class="h-[42px] w-auto object-contain sm:h-[58px]">
+        <div class="flex min-h-[62px] items-center gap-3 md:min-h-[76px] md:gap-4">
+            <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]" aria-label="Denata Shop">
+                <img src="{{ asset('images/denata-shop-logo-web.png') }}" alt="Denata Shop" class="h-10 w-auto object-contain sm:h-12 lg:h-[58px]">
+                <span class="hidden leading-none sm:block">
+                    <span class="block text-base font-black uppercase text-[#15181B]">Denata</span>
+                    <span class="block text-[11px] font-bold uppercase text-[#9A712E]">Shop</span>
+                </span>
             </a>
 
-            <x-store.search-autocomplete class="hidden flex-1 md:block" />
+            <x-store.search-autocomplete id="desktop-store-search" class="hidden flex-1 md:block" />
 
             <div class="ml-auto flex items-center gap-1 sm:gap-2">
+                <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#E5E1DA] text-[#15181B] transition hover:border-[#B88A3B] hover:text-[#9A712E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B] md:hidden" @click="mobileOpen = true; $nextTick(() => document.getElementById('mobile-store-search')?.focus())" aria-label="Kerko produkte">
+                    <x-store.icon name="search" class="h-5 w-5" />
+                </button>
+
+                <a href="{{ route('wishlist.index') }}" class="relative hidden h-11 w-11 items-center justify-center rounded-md border border-[#E5E1DA] text-[#15181B] transition hover:border-[#B88A3B] hover:text-[#9A712E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B] sm:inline-flex" aria-label="Lista e deshirave">
+                    <x-store.icon name="heart" class="h-5 w-5" />
+                    <span id="wishlist-count" class="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#C9473D] px-1 text-[11px] font-bold text-white">{{ $wishlistCount ?? 0 }}</span>
+                </a>
+
+                <a href="{{ route('cart.index') }}" class="relative inline-flex h-10 w-10 items-center justify-center rounded-md bg-[#15181B] text-white transition hover:bg-[#B88A3B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B] md:h-11 md:w-11" aria-label="Shporta">
+                    <x-store.icon name="cart" class="h-5 w-5" />
+                    <span id="cart-count" class="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#B88A3B] px-1 text-[11px] font-bold text-white">{{ $cartCount ?? 0 }}</span>
+                </a>
+
                 @auth
                     <div class="relative hidden md:block">
                         <button type="button" @click="accountOpen = !accountOpen" @keydown.escape="accountOpen = false" class="inline-flex h-11 items-center gap-2 rounded-md border border-[#E5E1DA] px-3 text-sm font-bold text-[#15181B] transition hover:border-[#B88A3B] hover:text-[#9A712E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]" :aria-expanded="accountOpen.toString()">
@@ -98,17 +108,7 @@
                     </a>
                 @endauth
 
-                <a href="{{ route('wishlist.index') }}" class="relative inline-flex h-11 w-11 items-center justify-center rounded-md border border-[#E5E1DA] text-[#15181B] transition hover:border-[#B88A3B] hover:text-[#9A712E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]" aria-label="Lista e deshirave">
-                    <x-store.icon name="heart" class="h-5 w-5" />
-                    <span id="wishlist-count" class="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#C9473D] px-1 text-[11px] font-bold text-white">{{ $wishlistCount ?? 0 }}</span>
-                </a>
-
-                <a href="{{ route('cart.index') }}" class="relative inline-flex h-11 w-11 items-center justify-center rounded-md bg-[#15181B] text-white transition hover:bg-[#B88A3B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]" aria-label="Shporta">
-                    <x-store.icon name="cart" class="h-5 w-5" />
-                    <span id="cart-count" class="absolute -right-2 -top-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#B88A3B] px-1 text-[11px] font-bold text-white">{{ $cartCount ?? 0 }}</span>
-                </a>
-
-                <button type="button" class="inline-flex h-11 w-11 items-center justify-center rounded-md border border-[#E5E1DA] text-[#15181B] transition hover:border-[#B88A3B] hover:text-[#9A712E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B] lg:hidden" @click="mobileOpen = true" aria-label="Hap menune">
+                <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-[#E5E1DA] text-[#15181B] transition hover:border-[#B88A3B] hover:text-[#9A712E] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B] md:h-11 md:w-11 lg:hidden" @click="mobileOpen = true" aria-label="Hap menune">
                     <x-store.icon name="menu" class="h-5 w-5" />
                 </button>
             </div>

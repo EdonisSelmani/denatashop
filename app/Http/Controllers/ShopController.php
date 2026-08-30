@@ -154,6 +154,7 @@ class ShopController extends Controller
                 'sku',
                 'image',
                 'gallery',
+                'attributes',
                 'is_active',
                 'is_featured',
                 'created_at',

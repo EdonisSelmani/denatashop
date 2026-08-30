@@ -1,4 +1,4 @@
-<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3">
+<div class="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
     @forelse($products as $product)
         <x-store.product-card :product="$product" />
     @empty
@@ -13,6 +13,6 @@
     @endforelse
 </div>
 
-<div class="mt-8">
+<div class="mt-8 max-w-full overflow-x-auto pb-1">
     {{ $products->withQueryString()->links() }}
 </div>

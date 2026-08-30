@@ -1,15 +1,16 @@
 @props(['title', 'description', 'href', 'icon' => 'home', 'count' => null, 'tone' => 'dark', 'featured' => false])
 
 <a href="{{ $href }}"
-   {{ $attributes->merge(['class' => ($featured ? 'md:col-span-2 ' : '') . 'group relative overflow-hidden rounded-lg border border-[#E5E1DA] bg-white p-5 transition duration-200 hover:-translate-y-0.5 hover:border-[#B88A3B] hover:shadow-[0_18px_45px_rgba(21,24,27,0.10)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]']) }}>
+   {{ $attributes->merge(['class' => ($featured ? 'md:col-span-2 ' : '') . 'group relative overflow-hidden rounded-lg border border-[#E1D9CB] bg-white p-5 shadow-[0_10px_30px_rgba(21,24,27,0.04)] transition duration-200 hover:-translate-y-0.5 hover:border-[#B88A3B] hover:shadow-[0_18px_45px_rgba(21,24,27,0.10)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]']) }}>
     <div class="absolute -right-10 -top-10 h-28 w-28 rotate-45 border border-[#E5E1DA] bg-[#F7F5F1] transition group-hover:border-[#B88A3B]"></div>
+    <div class="absolute inset-x-0 top-0 h-1 bg-[#15181B] opacity-0 transition group-hover:opacity-100"></div>
     <div class="relative flex h-full flex-col gap-5">
         <div class="flex items-start justify-between gap-4">
-            <span class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-[#15181B] text-[#B88A3B]">
+            <span class="inline-flex h-12 w-12 items-center justify-center rounded-md bg-[#15181B] text-[#D7B16D] shadow-[0_12px_28px_rgba(21,24,27,0.16)]">
                 <x-store.icon :name="$icon" class="h-6 w-6" />
             </span>
             @if(! is_null($count))
-                <span class="rounded-full border border-[#E5E1DA] px-3 py-1 text-xs font-bold text-[#6B6F74]">{{ $count }} produkte</span>
+                <span class="rounded-full border border-[#E5E1DA] bg-[#F7F5F1] px-3 py-1 text-xs font-bold text-[#6B6F74]">{{ $count }} produkte</span>
             @endif
         </div>
         <div>

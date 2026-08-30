@@ -3,19 +3,19 @@
 @section('title', 'Shporta ime - Denata Shop')
 
 @section('content')
-<div class="container-custom py-8">
+<div class="container-custom py-6 md:py-8">
     <nav class="mb-5 flex items-center gap-2 text-sm text-[#6B6F74]" aria-label="Breadcrumb">
         <a href="{{ route('home') }}" class="hover:text-[#9A712E]">Ballina</a>
         <span>/</span>
         <span class="font-semibold text-[#15181B]">Shporta</span>
     </nav>
 
-    <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div class="mb-8 rounded-lg border border-[#2A2D31] bg-[#15181B] p-6 text-white shadow-[0_24px_70px_rgba(21,24,27,0.12)] sm:flex sm:items-end sm:justify-between sm:gap-4">
         <div>
-            <p class="text-sm font-black uppercase text-[#9A712E]">Porosia</p>
-            <h1 class="mt-2 text-3xl font-black text-[#15181B]">Shporta ime</h1>
+            <p class="text-sm font-black uppercase text-[#D7B16D]">Porosia</p>
+            <h1 class="mt-2 text-3xl font-black text-white md:text-4xl">Shporta ime</h1>
         </div>
-        <a href="{{ route('shop') }}" class="btn-secondary inline-flex items-center justify-center gap-2">
+        <a href="{{ route('shop') }}" class="mt-4 inline-flex items-center justify-center gap-2 rounded-md border border-white/20 bg-white/10 px-5 py-3 text-sm font-black text-white transition hover:border-[#D7B16D] hover:text-[#D7B16D] sm:mt-0">
             Vazhdo blerjen
             <x-store.icon name="arrow-right" class="h-4 w-4" />
         </a>
@@ -25,7 +25,7 @@
         <div class="grid gap-8 lg:grid-cols-[1fr_360px]">
             <section class="space-y-4" aria-label="Produktet ne shporte">
                 @foreach($cartItems as $item)
-                    <article class="cart-item rounded-lg border border-[#E5E1DA] bg-white p-4" data-item-id="{{ $item->id }}" data-price="{{ $item->product->price }}">
+                    <article class="cart-item rounded-lg border border-[#E1D9CB] bg-white p-4 shadow-[0_12px_34px_rgba(21,24,27,0.05)]" data-item-id="{{ $item->id }}" data-price="{{ $item->product->price }}">
                         <div class="grid gap-4 sm:grid-cols-[132px_1fr_auto]">
                             <a href="{{ route('product.show', $item->product->slug) }}" class="flex h-32 w-32 items-center justify-center rounded-md bg-[#F7F5F1] p-3">
                                 <img src="{{ $item->product->thumbnail_url }}"
@@ -73,7 +73,7 @@
             </section>
 
             <aside class="lg:sticky lg:top-36 lg:self-start">
-                <div class="rounded-lg border border-[#E5E1DA] bg-white p-6">
+                <div class="rounded-lg border border-[#E1D9CB] bg-white p-6 shadow-[0_18px_55px_rgba(21,24,27,0.08)]">
                     <h2 class="text-xl font-black text-[#15181B]">Permbledhje</h2>
 
                     <div class="mt-5 space-y-3 border-b border-[#E5E1DA] pb-5 text-sm">

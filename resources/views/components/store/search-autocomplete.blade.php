@@ -1,6 +1,7 @@
 @props([
     'id' => 'store-search',
     'placeholder' => 'Kerko produkt, kategori ose SKU',
+    'boxClass' => 'relative mx-auto max-w-2xl',
     'inputClass' => 'h-12 w-full rounded-md border border-[#D8D1C6] bg-[#F7F5F1] pl-4 pr-14 text-sm text-[#17191C] placeholder:text-[#6B6F74] transition focus:border-[#B88A3B] focus:bg-white focus:ring-[#B88A3B]',
     'buttonClass' => 'absolute right-1.5 top-1.5 inline-flex h-9 w-10 items-center justify-center rounded-md bg-[#15181B] text-white transition hover:bg-[#B88A3B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B88A3B]',
 ])
@@ -8,6 +9,7 @@
 @php
     $searchEndpoint = route('search.suggestions', [], false);
     $shopEndpoint = route('shop', [], false);
+    $resultsId = $id . '-results';
 @endphp
 
 <form
@@ -18,7 +20,7 @@
     @submit="submitSearch"
 >
     <label for="{{ $id }}" class="sr-only">Kerko produkte</label>
-    <div class="relative">
+    <div class="{{ $boxClass }}">
         <input
             id="{{ $id }}"
             type="search"
@@ -34,12 +36,15 @@
             autocomplete="off"
             placeholder="{{ $placeholder }}"
             class="{{ $inputClass }}"
+            aria-autocomplete="list"
+            aria-controls="{{ $resultsId }}"
         >
         <button type="submit" class="{{ $buttonClass }}" aria-label="Kerko">
             <x-store.icon name="search" class="h-4 w-4" />
         </button>
 
         <div
+            id="{{ $resultsId }}"
             x-show="open"
             x-cloak
             x-transition

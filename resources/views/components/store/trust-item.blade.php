@@ -1,8 +1,8 @@
 @props(['icon', 'title', 'text'])
 
-<div {{ $attributes->merge(['class' => 'rounded-lg border border-[#E5E1DA] bg-white p-5']) }}>
+<div {{ $attributes->merge(['class' => 'rounded-lg border border-[#E1D9CB] bg-white p-5 shadow-[0_10px_30px_rgba(21,24,27,0.04)]']) }}>
     <div class="flex items-start gap-4">
-        <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-[#F7F5F1] text-[#B88A3B]">
+        <span class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-[#15181B] text-[#D7B16D]">
             <x-store.icon :name="$icon" class="h-5 w-5" />
         </span>
         <div>
