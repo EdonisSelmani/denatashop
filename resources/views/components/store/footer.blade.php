@@ -19,10 +19,9 @@
             <div>
                 <h2 class="text-sm font-black uppercase text-[#B88A3B]">Lidhje</h2>
                 <ul class="mt-4 space-y-3 text-sm">
-                    <li><a href="{{ route('shop') }}" class="text-[#D8D1C6] transition hover:text-white">Te gjitha produktet</a></li>
-                    <li><a href="{{ route('shop', ['sort' => 'latest']) }}" class="text-[#D8D1C6] transition hover:text-white">Produktet e reja</a></li>
-                    <li><a href="{{ route('wishlist.index') }}" class="text-[#D8D1C6] transition hover:text-white">Lista e deshirave</a></li>
-                    <li><a href="{{ route('cart.index') }}" class="text-[#D8D1C6] transition hover:text-white">Shporta</a></li>
+                    <li><a href="{{ route('home') }}" class="text-[#D8D1C6] transition hover:text-white">Ballina</a></li>
+                    <li><a href="{{ route('shop') }}" class="text-[#D8D1C6] transition hover:text-white">Të gjitha produktet</a></li>
+                    <li><a href="{{ route('sitemap') }}" class="text-[#D8D1C6] transition hover:text-white">Sitemap</a></li>
                 </ul>
             </div>
 

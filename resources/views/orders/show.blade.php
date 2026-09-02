@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Porosia ' . $order->order_number . ' | Denata Shop')
+@section('robots', 'noindex,nofollow')
 
 @section('content')
 <div class="bg-[#F7F5F1]">

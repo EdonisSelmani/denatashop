@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Lista e deshirave - Denata Shop')
+@section('robots', 'noindex,follow')
 
 @section('content')
 <div class="container-custom py-6 md:py-8">

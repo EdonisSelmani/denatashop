@@ -1,2 +1,25 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /build/
+Allow: /images/
+Allow: /storage/
+Disallow: /admin
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /cart
+Disallow: /checkout
+Disallow: /wishlist
+Disallow: /orders
+Disallow: /profile
+Disallow: /dashboard
+Disallow: /*?search=
+Disallow: /*?sort=
+Disallow: /*?min_price=
+Disallow: /*?max_price=
+Disallow: /*?availability=
+Disallow: /*?category=
+Disallow: /*?subcategory=
+
+Sitemap: https://denatashop.com/sitemap.xml

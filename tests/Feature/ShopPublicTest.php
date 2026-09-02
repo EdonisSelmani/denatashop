@@ -145,6 +145,45 @@ class ShopPublicTest extends TestCase
             ->assertDontSee('QA Empty Subcategory');
     }
 
+    public function test_public_catalog_pages_render_seo_metadata(): void
+    {
+        [$category, $product] = $this->createCatalogProduct();
+
+        $this->get(route('shop', ['search' => 'QA']))
+            ->assertOk()
+            ->assertSee('<link rel="canonical" href="https://denatashop.com/shop">', false)
+            ->assertSee('<meta name="robots" content="noindex,follow">', false);
+
+        $this->get(route('subcategory.show', [$category->slug, $product->subcategory->slug]))
+            ->assertOk()
+            ->assertSee('<link rel="canonical" href="https://denatashop.com/category/qa-shop-category/qa-shop-subcategory">', false)
+            ->assertSee('<meta name="robots" content="index,follow">', false)
+            ->assertSee('"@type": "BreadcrumbList"', false);
+
+        $this->get(route('product.show', $product->slug))
+            ->assertOk()
+            ->assertSee('<link rel="canonical" href="https://denatashop.com/product/qa-shop-product">', false)
+            ->assertSee('<meta name="robots" content="index,follow">', false)
+            ->assertSee('"@type": "Product"', false)
+            ->assertSee('"priceCurrency": "EUR"', false);
+    }
+
+    public function test_sitemap_includes_public_catalog_urls_and_excludes_private_pages(): void
+    {
+        [$category, $product] = $this->createCatalogProduct();
+
+        $this->get(route('sitemap'))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'application/xml; charset=UTF-8')
+            ->assertSee('https://denatashop.com/', false)
+            ->assertSee('https://denatashop.com/category/'.$category->slug, false)
+            ->assertSee('https://denatashop.com/category/'.$category->slug.'/'.$product->subcategory->slug, false)
+            ->assertSee('https://denatashop.com/product/'.$product->slug, false)
+            ->assertDontSee('/login', false)
+            ->assertDontSee('/cart', false)
+            ->assertDontSee('/admin', false);
+    }
+
     private function createCatalogProduct(array $overrides = []): array
     {
         $category = Category::create([

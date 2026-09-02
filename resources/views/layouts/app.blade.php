@@ -1,16 +1,27 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', config('seo.locale', app()->getLocale())) }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="@yield('meta_description', 'Denata Shop sjell produkte te zgjedhura per shtepi, pune dhe kopsht.')">
-    <link rel="canonical" href="@yield('canonical', url()->current())">
-    <meta property="og:title" content="@yield('title', 'Denata Shop - Produkte per shtepi, pune dhe kopsht')">
-    <meta property="og:description" content="@yield('meta_description', 'Denata Shop sjell produkte te zgjedhura per shtepi, pune dhe kopsht.')">
-    <meta property="og:type" content="@yield('og_type', 'website')">
-    <meta property="og:url" content="@yield('canonical', url()->current())">
-    <title>@yield('title', 'Denata Shop - Produkte per shtepi, pune dhe kopsht')</title>
+    @php
+        $decodeSeoSection = fn (string $section): string => trim(html_entity_decode($__env->yieldContent($section), ENT_QUOTES, 'UTF-8'));
+        $seoTitle = $decodeSeoSection('title');
+        $seoDescription = $decodeSeoSection('meta_description');
+        $seoCanonical = $decodeSeoSection('canonical');
+        $seoImage = $decodeSeoSection('seo_image');
+        $seoRobots = $decodeSeoSection('robots');
+        $seoType = $decodeSeoSection('seo_type') ?: $decodeSeoSection('og_type');
+    @endphp
+    <x-seo.head
+        :title="$seoTitle ?: null"
+        :description="$seoDescription ?: null"
+        :canonical="$seoCanonical ?: null"
+        :image="$seoImage ?: null"
+        :robots="$seoRobots ?: 'index,follow'"
+        :type="$seoType ?: 'website'"
+        :structured-data="$structuredData ?? []"
+    />
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">

@@ -4,6 +4,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -52,6 +53,10 @@ Route::get('/health/db', function () {
     }
 })->withoutMiddleware([StartSession::class, ShareErrorsFromSession::class, VerifyCsrfToken::class])->name('health.db');
 
+Route::get('/sitemap.xml', SitemapController::class)
+    ->withoutMiddleware([StartSession::class, ShareErrorsFromSession::class, VerifyCsrfToken::class])
+    ->name('sitemap');
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Public routes
@@ -63,6 +68,7 @@ Route::get('/product/{slug}', [ShopController::class, 'show'])->name('product.sh
 
 // KATEGORITË - VETËM NJË HERË! (Redirect në shop)
 Route::get('/category/{slug}', [ShopController::class, 'category'])->name('category.show');
+Route::get('/category/{categorySlug}/{subcategorySlug}', [ShopController::class, 'subcategory'])->name('subcategory.show');
 
 // Cart count - public
 Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');

@@ -191,6 +191,7 @@ class ShopController extends Controller
                 ->whereHas('products', fn ($query) => $query->where('products.is_active', true))
                 ->get();
         $subcategoryIds = $subcategories->pluck('id');
+        $selectedSubcategory = null;
 
         $query = $this->productCardQuery();
         $subcategoryIds->isNotEmpty()
@@ -202,6 +203,7 @@ class ShopController extends Controller
                 ?? Subcategory::where('slug', $request->subcategory)->first();
 
             if ($subcategory) {
+                $selectedSubcategory = $subcategory;
                 $query->where('products.subcategory_id', $subcategory->id);
             }
         }
@@ -229,7 +231,70 @@ class ShopController extends Controller
         $products = $query->paginate(12)->withQueryString();
         $catalogCache->attachSubcategoryRelations($products->getCollection());
 
-        return view('shop.category', compact('category', 'products', 'subcategories'));
+        return view('shop.category', [
+            'category' => $category,
+            'subcategory' => $selectedSubcategory,
+            'products' => $products,
+            'subcategories' => $subcategories,
+        ]);
+    }
+
+    public function subcategory($categorySlug, $subcategorySlug, Request $request, PublicCatalogCache $catalogCache)
+    {
+        $category = $catalogCache->categoryBySlug($categorySlug);
+
+        if (! $category) {
+            $category = Category::where('slug', $categorySlug)
+                ->where('is_active', true)
+                ->firstOrFail();
+        }
+
+        $subcategories = $category->relationLoaded('subcategories')
+            ? $category->subcategories
+            : $category->subcategories()
+                ->where('subcategories.is_active', true)
+                ->whereHas('products', fn ($query) => $query->where('products.is_active', true))
+                ->get();
+
+        $subcategory = $subcategories->firstWhere('slug', $subcategorySlug)
+            ?? Subcategory::query()
+                ->where('category_id', $category->id)
+                ->where('slug', $subcategorySlug)
+                ->where('is_active', true)
+                ->whereHas('products', fn ($query) => $query->where('products.is_active', true))
+                ->firstOrFail();
+
+        if (! $subcategories->contains('id', $subcategory->id)) {
+            $subcategories->push($subcategory);
+        }
+
+        $query = $this->productCardQuery()
+            ->where('products.subcategory_id', $subcategory->id);
+
+        if ($request->filled('min_price')) {
+            $query->where('products.price', '>=', $request->min_price);
+        }
+
+        if ($request->filled('max_price')) {
+            $query->where('products.price', '<=', $request->max_price);
+        }
+
+        if ($request->get('availability') === 'in_stock') {
+            $query->where('products.stock', '>', 0);
+        }
+
+        match ($request->get('sort', 'latest')) {
+            'price_low' => $query->orderBy('products.price'),
+            'price_high' => $query->orderByDesc('products.price'),
+            'name_asc' => $query->orderBy('products.name'),
+            'name_desc' => $query->orderByDesc('products.name'),
+            default => $query->latest('products.created_at'),
+        };
+
+        $products = $query->paginate(12)->withQueryString();
+        $catalogCache->attachSubcategoryRelations($products->getCollection());
+
+        return view('shop.category', compact('category', 'subcategory', 'products', 'subcategories'));
     }
 
     private function productCardQuery(): Builder

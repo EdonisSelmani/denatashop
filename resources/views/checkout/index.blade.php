@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Checkout | Denata Shop')
+@section('robots', 'noindex,nofollow')
 
 @section('content')
 <div class="bg-[#F7F5F1]">

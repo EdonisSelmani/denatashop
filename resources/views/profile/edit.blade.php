@@ -1,3 +1,5 @@
+@section('robots', 'noindex,nofollow')
+
 <x-app-layout>
     <x-slot name="header">
         <div>

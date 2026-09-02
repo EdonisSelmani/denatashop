@@ -123,7 +123,7 @@
                             <div x-show="open" x-cloak x-transition class="border-t border-[#E5E1DA] px-3 py-2">
                                 <div class="grid gap-1">
                                     @foreach($item['children']->take(18) as $subcategory)
-                                        <a href="{{ route('shop', ['category' => $item['category_slug'], 'subcategory' => $subcategory->slug]) }}"
+                                        <a href="{{ $item['category_slug'] ? route('subcategory.show', [$item['category_slug'], $subcategory->slug]) : route('shop', ['subcategory' => $subcategory->slug]) }}"
                                            @click="mobileOpen = false"
                                            class="rounded-md px-3 py-2 text-sm font-semibold text-[#6B6F74] transition hover:bg-[#F7F5F1] hover:text-[#9A712E]">
                                             {{ $subcategory->name }}

@@ -1,8 +1,26 @@
 @extends('layouts.app')
 
-@section('title', $product->name . ' - Denata Shop')
-@section('meta_description', Str::limit(strip_tags($product->description), 155))
-@section('og_type', 'product')
+@php
+    $productCategory = $product->subcategory?->category;
+    $productSubcategory = $product->subcategory;
+    $productBreadcrumbs = array_values(array_filter([
+        ['name' => 'Ballina', 'url' => route('home', [], false)],
+        ['name' => 'Produktet', 'url' => route('shop', [], false)],
+        $productCategory ? ['name' => $productCategory->name, 'url' => route('category.show', $productCategory->slug, false)] : null,
+        ($productCategory && $productSubcategory) ? ['name' => $productSubcategory->name, 'url' => route('subcategory.show', [$productCategory->slug, $productSubcategory->slug], false)] : null,
+        ['name' => $product->name, 'url' => route('product.show', $product->slug, false)],
+    ]));
+    $structuredData = [
+        App\Support\Seo::productSchema($product),
+        App\Support\Seo::breadcrumbSchema($productBreadcrumbs),
+    ];
+@endphp
+
+@section('title', App\Support\Seo::productTitle($product))
+@section('meta_description', App\Support\Seo::productDescription($product))
+@section('canonical', App\Support\Seo::canonical(route('product.show', $product->slug, false)))
+@section('seo_image', App\Support\Seo::storageImage($product->image))
+@section('seo_type', 'product')
 
 @section('content')
 @php
@@ -18,9 +36,13 @@
         <a href="{{ route('home') }}" class="hover:text-[#9A712E]">Ballina</a>
         <span>/</span>
         <a href="{{ route('shop') }}" class="hover:text-[#9A712E]">Produktet</a>
-        @if($product->subcategory?->category)
+        @if($productCategory)
             <span>/</span>
-            <a href="{{ route('category.show', $product->subcategory->category->slug) }}" class="hover:text-[#9A712E]">{{ $product->subcategory->category->name }}</a>
+            <a href="{{ route('category.show', $productCategory->slug) }}" class="hover:text-[#9A712E]">{{ $productCategory->name }}</a>
+        @endif
+        @if($productCategory && $productSubcategory)
+            <span>/</span>
+            <a href="{{ route('subcategory.show', [$productCategory->slug, $productSubcategory->slug]) }}" class="hover:text-[#9A712E]">{{ $productSubcategory->name }}</a>
         @endif
         <span>/</span>
         <span class="font-semibold text-[#15181B]">{{ Str::limit($product->name, 42) }}</span>
@@ -40,6 +62,7 @@
                          alt="{{ $product->name }}"
                          width="720"
                          height="720"
+                         fetchpriority="high"
                          decoding="async"
                          class="h-full w-full object-contain">
                 </div>
@@ -62,11 +85,15 @@
         <aside class="lg:sticky lg:top-36 lg:self-start">
             <div class="rounded-lg border border-[#E1D9CB] bg-white p-5 shadow-[0_18px_55px_rgba(21,24,27,0.08)] md:p-6">
                 <div class="flex flex-wrap items-center gap-2 text-sm font-bold text-[#6B6F74]">
-                    @if($product->subcategory?->category)
-                        <a href="{{ route('category.show', $product->subcategory->category->slug) }}" class="text-[#9A712E] hover:text-[#15181B]">{{ $product->subcategory->category->name }}</a>
+                    @if($productCategory)
+                        <a href="{{ route('category.show', $productCategory->slug) }}" class="text-[#9A712E] hover:text-[#15181B]">{{ $productCategory->name }}</a>
                         <span>/</span>
                     @endif
-                    <span>{{ $product->subcategory?->name }}</span>
+                    @if($productCategory && $productSubcategory)
+                        <a href="{{ route('subcategory.show', [$productCategory->slug, $productSubcategory->slug]) }}" class="hover:text-[#9A712E]">{{ $productSubcategory->name }}</a>
+                    @else
+                        <span>{{ $productSubcategory?->name }}</span>
+                    @endif
                 </div>
 
                 <h1 class="mt-3 text-3xl font-black leading-tight text-[#15181B] md:text-4xl">{{ $product->name }}</h1>

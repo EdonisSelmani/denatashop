@@ -1,7 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Denata Shop - Produkte për shtëpi, punë dhe kopsht')
-@section('meta_description', 'Denata Shop ofron produkte sanitare, vegla pune, vegla kopshti dhe elektronike me katalog të përditësuar.')
+@section('title', 'DenataShop - Sanitari, vegla pune dhe produkte për shtëpi në Kosovë')
+@section('meta_description', 'Blej sanitari, vegla pune, vegla kopshti, ujësjellës dhe elektronike në DenataShop. Katalog i qartë për projekte shtëpie në Kosovë.')
+@section('canonical', App\Support\Seo::canonical(route('home', [], false)))
+@section('seo_image', App\Support\Seo::image('images/denata-home-hero-products.png'))
+
+@php
+    $structuredData = [
+        App\Support\Seo::websiteSchema(),
+        App\Support\Seo::organizationSchema(),
+        App\Support\Seo::breadcrumbSchema([
+            ['name' => 'Ballina', 'url' => route('home', [], false)],
+        ]),
+    ];
+@endphp
 
 @section('content')
 @php
@@ -66,7 +78,7 @@
 
 <section class="relative overflow-hidden border-b border-[#E5E7EB] bg-[#F7F6F3]">
     <div class="absolute inset-y-0 right-0 hidden w-[55%] lg:block" aria-hidden="true">
-        <img src="{{ $heroImage }}" alt="" width="846" height="484" loading="eager" class="h-full w-full object-cover object-center">
+        <img src="{{ $heroImage }}" alt="" width="846" height="484" loading="eager" fetchpriority="high" class="h-full w-full object-cover object-center">
         <div class="absolute inset-y-0 left-0 w-[22%] bg-gradient-to-r from-[#F7F6F3] via-[#F7F6F3]/80 to-transparent"></div>
     </div>
     <div class="pointer-events-none absolute right-[-18%] top-8 h-[360px] w-[360px] rounded-full bg-white/65 md:right-[-8%] lg:hidden" aria-hidden="true"></div>
@@ -92,7 +104,7 @@
         </div>
 
         <div class="relative z-10 mx-auto w-full max-w-[760px] lg:hidden" aria-label="Koleksion produktesh Denata Shop">
-            <img src="{{ $heroImage }}" alt="Bateri, vegla pune, karrocë, ndriçim dhe aksesorë ujësjellësi Denata Shop" width="846" height="484" loading="eager" class="-mx-4 mt-2 h-auto w-[calc(100%+2rem)] max-w-none object-cover">
+            <img src="{{ $heroImage }}" alt="Bateri, vegla pune, karrocë, ndriçim dhe aksesorë ujësjellësi Denata Shop" width="846" height="484" loading="eager" fetchpriority="high" class="-mx-4 mt-2 h-auto w-[calc(100%+2rem)] max-w-none object-cover">
         </div>
     </div>
 </section>
@@ -148,8 +160,15 @@
                 <p class="text-sm font-black uppercase text-[#9A712E]">Denata Shop</p>
                 <h2 class="mt-2 text-3xl font-black text-[#111111]">Partneri yt për shtëpi dhe punë</h2>
                 <p class="mt-4 max-w-3xl leading-8 text-[#6B7280]">
-                    Denata Shop sjell produkte të zgjedhura për instalime sanitare, vegla pune, kopsht dhe elektronike, me fokus në cilësi dhe shërbim të besueshëm.
+                    DenataShop sjell produkte të zgjedhura për banjo, instalime ujësjellësi, vegla pune, kopsht dhe projekte elektrike në Kosovë, me katalog të organizuar për zgjedhje më të lehtë.
                 </p>
+                <div class="mt-5 flex flex-wrap gap-2">
+                    @foreach($categoryCards as $card)
+                        <a href="{{ $card['href'] }}" class="rounded-full border border-[#E5E7EB] bg-[#F7F6F3] px-3 py-1.5 text-sm font-bold text-[#111111] transition hover:border-[#C9A14A] hover:text-[#9A712E]">
+                            {{ $card['title'] }}
+                        </a>
+                    @endforeach
+                </div>
             </div>
             <a href="{{ route('shop') }}" class="inline-flex items-center justify-center gap-2 rounded-md bg-[#111111] px-5 py-3 text-sm font-black text-white transition hover:bg-[#C9A14A] hover:text-[#111111]">
                 Hyr në dyqan

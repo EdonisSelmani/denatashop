@@ -15,6 +15,7 @@
                 @php $isCategoryActive = request('category') === $category->slug; @endphp
                 <div class="overflow-hidden rounded-md border {{ $isCategoryActive ? 'border-[#B88A3B] bg-[#B88A3B]/10' : 'border-[#E5E1DA] bg-white' }}">
                     <a href="{{ route('shop', array_merge(request()->except('category', 'subcategory', 'page'), ['category' => $category->slug])) }}"
+                       rel="nofollow"
                        class="flex items-center justify-between gap-3 px-3 py-2.5 text-sm font-black {{ $isCategoryActive ? 'text-[#9A712E]' : 'text-[#22272B]' }}">
                         <span class="truncate">{{ $category->name }}</span>
                         <span class="shrink-0 text-xs text-[#6B6F74]">{{ $category->products_count ?? $category->active_products_count ?? '' }}</span>
@@ -24,6 +25,7 @@
                             <div class="grid gap-1">
                                 @foreach($category->subcategories as $subcategory)
                                     <a href="{{ route('shop', array_merge(request()->except('category', 'subcategory', 'page'), ['category' => $category->slug, 'subcategory' => $subcategory->slug])) }}"
+                                       rel="nofollow"
                                        class="rounded px-2 py-1.5 text-sm font-semibold {{ request('subcategory') === $subcategory->slug ? 'bg-white text-[#9A712E] shadow-sm' : 'text-[#6B6F74] hover:bg-[#F7F5F1] hover:text-[#9A712E]' }}">
                                         {{ $subcategory->name }}
                                     </a>

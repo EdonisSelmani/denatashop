@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Fjalekalim i ri - Denata Shop')
+@section('robots', 'noindex,follow')
 
 @section('content')
 <section class="bg-[#F7F5F1] px-4 py-12 sm:px-6 lg:px-8">

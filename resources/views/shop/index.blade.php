@@ -1,7 +1,25 @@
 @extends('layouts.app')
 
-@section('title', 'Produktet - Denata Shop')
-@section('meta_description', 'Shfletoni produktet e Denata Shop dhe filtroni sipas kategorise, cmimit dhe disponueshmerise.')
+@php
+    $hasSearchOrFilter = request()->hasAny(['search', 'category', 'subcategory', 'min_price', 'max_price', 'availability', 'sort']);
+    $shopTitle = request('search')
+        ? 'Kërkim për ' . request('search') . ' | DenataShop'
+        : 'Produktet | DenataShop Kosovë';
+    $shopDescription = request('search')
+        ? 'Rezultate kërkimi në katalogun DenataShop për produkte sanitare, vegla pune, ujësjellës, kopsht dhe elektronikë.'
+        : 'Shfleto katalogun DenataShop për sanitari, vegla pune, vegla kopshti, ujësjellës dhe elektronikë për projekte në Kosovë.';
+    $structuredData = [
+        App\Support\Seo::breadcrumbSchema([
+            ['name' => 'Ballina', 'url' => route('home', [], false)],
+            ['name' => 'Produktet', 'url' => route('shop', [], false)],
+        ]),
+    ];
+@endphp
+
+@section('title', $shopTitle)
+@section('meta_description', $shopDescription)
+@section('canonical', App\Support\Seo::canonical(route('shop', [], false)))
+@section('robots', $hasSearchOrFilter ? 'noindex,follow' : 'index,follow')
 
 @section('content')
 @php
@@ -66,7 +84,7 @@
         @if($chips->count())
             <div class="mt-5 flex flex-wrap gap-2">
                 @foreach($chips as $chip)
-                    <a href="{{ $chip['href'] }}" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-white transition hover:border-[#D7B16D] hover:text-[#D7B16D]">
+                    <a href="{{ $chip['href'] }}" rel="nofollow" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold text-white transition hover:border-[#D7B16D] hover:text-[#D7B16D]">
                         {{ $chip['label'] }}
                         <span aria-hidden="true">&times;</span>
                     </a>

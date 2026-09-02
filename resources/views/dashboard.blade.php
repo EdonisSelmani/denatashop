@@ -1,3 +1,5 @@
+@section('robots', 'noindex,nofollow')
+
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">

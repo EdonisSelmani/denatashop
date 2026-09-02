@@ -36,8 +36,11 @@
             autocomplete="off"
             placeholder="{{ $placeholder }}"
             class="{{ $inputClass }}"
+            role="combobox"
             aria-autocomplete="list"
             aria-controls="{{ $resultsId }}"
+            aria-haspopup="listbox"
+            :aria-expanded="open.toString()"
         >
         <button type="submit" class="{{ $buttonClass }}" aria-label="Kerko">
             <x-store.icon name="search" class="h-4 w-4" />
@@ -50,6 +53,7 @@
             x-transition
             @click.outside="close"
             class="absolute left-0 right-0 top-full z-[70] mt-2 overflow-hidden rounded-lg border border-[#E5E7EB] bg-white shadow-2xl"
+            role="listbox"
         >
             <div x-show="loading" class="px-4 py-3 text-sm font-semibold text-[#6B7280]">
                 Duke kerkuar...
@@ -67,6 +71,8 @@
                         @mousedown.prevent="go(item.url)"
                         class="flex items-center gap-3 px-3 py-2 transition hover:bg-[#F7F6F3]"
                         :class="{ 'bg-[#F7F6F3]': activeIndex === index }"
+                        role="option"
+                        :aria-selected="(activeIndex === index).toString()"
                     >
                         <img
                             :src="item.thumbnail_url"

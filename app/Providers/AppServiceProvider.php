@@ -27,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         View::composer('*', function ($view) {
+            if (str_starts_with((string) $view->getName(), 'seo.')) {
+                return;
+            }
+
             static $sharedUserData = null;
 
             if ($sharedUserData === null) {
