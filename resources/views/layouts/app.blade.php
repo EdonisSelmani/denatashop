@@ -29,6 +29,8 @@
     <link rel="manifest" href="{{ asset('site.webmanifest') }}">
     <meta name="theme-color" content="#15181B">
 
+    <x-analytics.google-analytics />
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>

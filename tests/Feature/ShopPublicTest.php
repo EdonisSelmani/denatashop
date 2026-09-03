@@ -184,6 +184,31 @@ class ShopPublicTest extends TestCase
             ->assertDontSee('/admin', false);
     }
 
+    public function test_google_analytics_tag_renders_once_when_configured(): void
+    {
+        config(['services.google_analytics.measurement_id' => 'G-EJLL30X4B4']);
+
+        $content = $this->get(route('shop'))
+            ->assertOk()
+            ->getContent();
+
+        $this->assertSame(
+            1,
+            substr_count($content, 'https://www.googletagmanager.com/gtag/js?id=G-EJLL30X4B4')
+        );
+        $this->assertSame(1, substr_count($content, "gtag('config', 'G-EJLL30X4B4');"));
+    }
+
+    public function test_google_analytics_tag_is_not_rendered_without_measurement_id(): void
+    {
+        config(['services.google_analytics.measurement_id' => null]);
+
+        $this->get(route('shop'))
+            ->assertOk()
+            ->assertDontSee('googletagmanager.com/gtag/js', false)
+            ->assertDontSee("gtag('config'", false);
+    }
+
     private function createCatalogProduct(array $overrides = []): array
     {
         $category = Category::create([
