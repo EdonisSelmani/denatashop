@@ -23,6 +23,67 @@ class ShopPublicTest extends TestCase
         $this->get(route('product.show', $product->slug))->assertOk();
     }
 
+    public function test_main_navigation_marks_only_home_active_on_the_homepage(): void
+    {
+        $this->createNamedCatalogProduct('Vegla Pune', 'vegla-pune', 'Çekiçë', 'cekice', 'NAV-HOME');
+        Cache::flush();
+
+        $content = $this->get(route('home'))->assertOk()->getContent();
+
+        $this->assertNavigationItemActive($content, 'Ballina');
+        $this->assertNavigationItemInactive($content, 'Vegla Pune');
+    }
+
+    public function test_main_navigation_marks_each_category_active_on_its_category_page(): void
+    {
+        $categories = [
+            ['Sanitari', 'sanitari'],
+            ['Vegla Pune', 'vegla-pune'],
+            ['Vegla Kopshti', 'vegla-kopshti'],
+            ['Elektronike', 'elektronike'],
+            ['Ujësjellës', 'ujesjelles'],
+        ];
+
+        foreach ($categories as $index => [$name, $slug]) {
+            $this->createNamedCatalogProduct($name, $slug, 'Nënkategori '.$index, 'nenkategori-'.$index, 'NAV-'.$index);
+        }
+        Cache::flush();
+
+        foreach ($categories as [$name, $slug]) {
+            $content = $this->get(route('category.show', $slug))->assertOk()->getContent();
+
+            $this->assertNavigationItemActive($content, $name);
+            $this->assertNavigationItemInactive($content, 'Ballina');
+        }
+    }
+
+    public function test_category_stays_active_on_subcategory_filtered_listing_and_product_pages(): void
+    {
+        [$category, $subcategory, $product] = $this->createNamedCatalogProduct(
+            'Vegla Pune',
+            'vegla-pune',
+            'Çekiçë',
+            'cekice',
+            'NAV-DEEP'
+        );
+        Cache::flush();
+
+        $urls = [
+            route('subcategory.show', [$category->slug, $subcategory->slug]),
+            route('category.show', ['slug' => $category->slug, 'subcategory' => $subcategory->slug]),
+            route('shop', ['category' => $category->slug]),
+            route('shop', ['subcategory' => $subcategory->slug]),
+            route('product.show', $product->slug),
+        ];
+
+        foreach ($urls as $url) {
+            $content = $this->get($url)->assertOk()->getContent();
+
+            $this->assertNavigationItemActive($content, 'Vegla Pune');
+            $this->assertNavigationItemInactive($content, 'Ballina');
+        }
+    }
+
     public function test_invalid_public_slugs_return_404(): void
     {
         $this->get(route('category.show', 'missing-category'))->assertNotFound();
@@ -237,5 +298,80 @@ class ShopPublicTest extends TestCase
         ], $overrides));
 
         return [$category, $product];
+    }
+
+    private function createNamedCatalogProduct(
+        string $categoryName,
+        string $categorySlug,
+        string $subcategoryName,
+        string $subcategorySlug,
+        string $sku
+    ): array {
+        $category = Category::create([
+            'name' => $categoryName,
+            'slug' => $categorySlug,
+            'is_active' => true,
+        ]);
+        $subcategory = Subcategory::create([
+            'category_id' => $category->id,
+            'name' => $subcategoryName,
+            'slug' => $subcategorySlug,
+            'is_active' => true,
+        ]);
+        $product = Product::create([
+            'subcategory_id' => $subcategory->id,
+            'name' => 'Produkt '.$sku,
+            'slug' => 'produkt-'.strtolower($sku),
+            'description' => 'Navigation active-state test product.',
+            'price' => 20,
+            'stock' => 10,
+            'sku' => $sku,
+            'is_active' => true,
+            'is_featured' => false,
+        ]);
+
+        return [$category, $subcategory, $product];
+    }
+
+    private function assertNavigationItemActive(string $html, string $label): void
+    {
+        $link = $this->navigationLink($html, $label);
+
+        $this->assertSame('page', $link->getAttribute('aria-current'));
+        $this->assertStringContainsString('text-[#9A712E]', $link->getAttribute('class'));
+        $this->assertNotNull($this->navigationUnderline($link));
+    }
+
+    private function assertNavigationItemInactive(string $html, string $label): void
+    {
+        $link = $this->navigationLink($html, $label);
+
+        $this->assertFalse($link->hasAttribute('aria-current'));
+        $this->assertStringContainsString('text-[#111111]', $link->getAttribute('class'));
+        $this->assertNull($this->navigationUnderline($link));
+    }
+
+    private function navigationLink(string $html, string $label): \DOMElement
+    {
+        $document = new \DOMDocument;
+        @$document->loadHTML($html);
+        $xpath = new \DOMXPath($document);
+        $literal = "'".str_replace("'", "', \"'\", '", $label)."'";
+        $link = $xpath->query("//nav[@aria-label='Navigimi kryesor']/a[normalize-space(.)={$literal}]")->item(0);
+
+        $this->assertInstanceOf(\DOMElement::class, $link, "Navigation link {$label} was not rendered.");
+
+        return $link;
+    }
+
+    private function navigationUnderline(\DOMElement $link): ?\DOMElement
+    {
+        foreach ($link->getElementsByTagName('span') as $span) {
+            if (str_contains($span->getAttribute('class'), 'bg-[#C9A14A]')) {
+                return $span;
+            }
+        }
+
+        return null;
     }
 }

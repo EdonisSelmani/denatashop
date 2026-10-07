@@ -103,7 +103,11 @@
                         <span id="cart-total" class="text-2xl font-black text-[#15181B]">&euro;{{ number_format((float) $total, 2) }}</span>
                     </div>
 
-                    <a href="{{ route('checkout.index') }}" class="btn-primary mt-6 flex w-full items-center justify-center gap-2">
+                    <div id="minimum-order-message" class="mt-5 rounded-md border px-4 py-3 text-sm font-semibold {{ $meetsMinimumOrder ? 'border-[#25865A]/30 bg-[#25865A]/10 text-[#1f6d49]' : 'border-[#C9473D]/30 bg-[#C9473D]/10 text-[#C9473D]' }}">
+                        Porosia minimale është {{ number_format((float) $minimumOrder, 2, ',', '.') }} € pas zbritjeve.
+                    </div>
+
+                    <a id="checkout-link" href="{{ route('checkout.index') }}" class="btn-primary mt-6 flex w-full items-center justify-center gap-2 {{ $meetsMinimumOrder ? '' : 'pointer-events-none opacity-50' }}" aria-disabled="{{ $meetsMinimumOrder ? 'false' : 'true' }}">
                         Vazhdo ne checkout
                         <x-store.icon name="arrow-right" class="h-4 w-4" />
                     </a>
@@ -182,6 +186,7 @@
                     if (memberDiscount && data.member_discount !== undefined) {
                         memberDiscount.textContent = '-\u20ac' + data.member_discount.toFixed(2);
                     }
+                    updateMinimumOrderState(data.cart_total, data.minimum_order);
                 }
 
                 if (data.cart_count !== undefined) {
@@ -231,6 +236,7 @@
                     if (memberDiscount && data.member_discount !== undefined) {
                         memberDiscount.textContent = '-\u20ac' + data.member_discount.toFixed(2);
                     }
+                    updateMinimumOrderState(data.cart_total, data.minimum_order);
                 }
 
                 window.showToast?.('Produkti u hoq nga shporta', 'success');
@@ -240,6 +246,20 @@
         } catch (error) {
             window.showToast?.('Ndodhi nje gabim', 'error');
         }
+    }
+
+    function updateMinimumOrderState(total, minimum) {
+        if (minimum === undefined) return;
+
+        const meetsMinimum = Math.round(total * 100) >= Math.round(minimum * 100);
+        const link = document.getElementById('checkout-link');
+        const message = document.getElementById('minimum-order-message');
+        link.classList.toggle('pointer-events-none', !meetsMinimum);
+        link.classList.toggle('opacity-50', !meetsMinimum);
+        link.setAttribute('aria-disabled', meetsMinimum ? 'false' : 'true');
+        message.className = 'mt-5 rounded-md border px-4 py-3 text-sm font-semibold ' + (meetsMinimum
+            ? 'border-[#25865A]/30 bg-[#25865A]/10 text-[#1f6d49]'
+            : 'border-[#C9473D]/30 bg-[#C9473D]/10 text-[#C9473D]');
     }
 </script>
 @endpush

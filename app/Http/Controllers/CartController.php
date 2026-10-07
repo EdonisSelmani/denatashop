@@ -16,8 +16,10 @@ class CartController extends Controller
         $subtotal = $cart->subtotal($cartItems);
         $memberDiscount = $cart->memberDiscount($subtotal);
         $total = max(0, $subtotal - $memberDiscount);
+        $minimumOrder = ((int) config('shop.minimum_order_cents', 1000)) / 100;
+        $meetsMinimumOrder = (int) round($total * 100) >= (int) config('shop.minimum_order_cents', 1000);
 
-        return view('cart.index', compact('cartItems', 'subtotal', 'memberDiscount', 'total'));
+        return view('cart.index', compact('cartItems', 'subtotal', 'memberDiscount', 'total', 'minimumOrder', 'meetsMinimumOrder'));
     }
 
     public function add(Request $request, CartService $cart)
@@ -68,6 +70,7 @@ class CartController extends Controller
             'cart_subtotal' => $subtotal,
             'member_discount' => $memberDiscount,
             'cart_total' => max(0, $subtotal - $memberDiscount),
+            'minimum_order' => ((int) config('shop.minimum_order_cents', 1000)) / 100,
             'cart_count' => $cart->count(),
         ]);
     }
@@ -85,6 +88,7 @@ class CartController extends Controller
             'cart_subtotal' => $subtotal,
             'member_discount' => $memberDiscount,
             'cart_total' => max(0, $subtotal - $memberDiscount),
+            'minimum_order' => ((int) config('shop.minimum_order_cents', 1000)) / 100,
             'cart_count' => $cart->count(),
         ]);
     }

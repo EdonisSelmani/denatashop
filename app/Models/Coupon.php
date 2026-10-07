@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Coupon extends Model
 {
     public const TYPE_FIXED = 'fixed';
+
     public const TYPE_PERCENT = 'percent';
 
     protected $fillable = [
@@ -40,6 +41,11 @@ class Coupon extends Model
 
     public function isUsableFor(float $subtotal): bool
     {
+        return $this->isUsableForCents($this->moneyToCents(number_format($subtotal, 2, '.', '')));
+    }
+
+    public function isUsableForCents(int $subtotalCents): bool
+    {
         if (! $this->is_active) {
             return false;
         }
@@ -56,15 +62,31 @@ class Coupon extends Model
             return false;
         }
 
-        return $subtotal >= (float) $this->minimum_order_total;
+        return $subtotalCents >= $this->moneyToCents($this->minimum_order_total);
     }
 
     public function discountFor(float $subtotal): float
     {
+        return $this->discountCentsFor($this->moneyToCents(number_format($subtotal, 2, '.', ''))) / 100;
+    }
+
+    public function discountCentsFor(int $subtotalCents): int
+    {
         if ($this->type === self::TYPE_PERCENT) {
-            return round($subtotal * min((float) $this->value, 100) / 100, 2);
+            $percentHundredths = min($this->moneyToCents($this->value), 10000);
+
+            return intdiv($subtotalCents * $percentHundredths + 5000, 10000);
         }
 
-        return round(min((float) $this->value, $subtotal), 2);
+        return min($this->moneyToCents($this->value), $subtotalCents);
+    }
+
+    private function moneyToCents(string $amount): int
+    {
+        if (! preg_match('/^(\d+)(?:\.(\d{1,2}))?$/', trim($amount), $matches)) {
+            throw new \InvalidArgumentException("Invalid decimal money value: {$amount}");
+        }
+
+        return ((int) $matches[1] * 100) + (int) str_pad($matches[2] ?? '', 2, '0');
     }
 }

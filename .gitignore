@@ -14,8 +14,14 @@
 /auth.json
 /node_modules
 /public/build
+/public/build-new.zip
+/public/build-seo.zip
 /public/hot
 /public/storage
+/database/*.sqlite
+/storage/app/private/import
+/storage/debugbar
+/storage/framework/testing
 /storage/*.key
 /storage/pail
 /vendor

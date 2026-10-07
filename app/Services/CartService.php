@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Auth;
 
 class CartService
 {
+    public function __construct(private readonly PriceNormalizer $prices)
+    {
+    }
+
     public function items(): Collection
     {
         if (Auth::check()) {
@@ -56,12 +60,24 @@ class CartService
 
     public function subtotal(Collection $items): float
     {
-        return (float) $items->sum(fn ($item) => $item->product->price * $item->quantity);
+        return $this->subtotalCents($items) / 100;
+    }
+
+    public function subtotalCents(Collection $items): int
+    {
+        return (int) $items->sum(
+            fn ($item) => $this->prices->toCents($item->product->price) * (int) $item->quantity
+        );
     }
 
     public function memberDiscount(float $subtotal): float
     {
-        return Auth::check() ? round($subtotal * 0.07, 2) : 0.0;
+        return $this->memberDiscountCents($this->prices->toCents(number_format($subtotal, 2, '.', ''))) / 100;
+    }
+
+    public function memberDiscountCents(int $subtotalCents): int
+    {
+        return Auth::check() ? intdiv($subtotalCents * 7 + 50, 100) : 0;
     }
 
     public function add(Product $product, int $quantity): int

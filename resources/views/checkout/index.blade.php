@@ -154,7 +154,11 @@
                     Pagesa behet me para ne dore gjate dorezimit.
                 </div>
 
-                <button type="submit" class="btn-primary flex w-full items-center justify-center gap-2">
+                <div class="mb-5 rounded-md border px-4 py-3 text-sm font-semibold {{ $meetsMinimumOrder ? 'border-[#25865A]/30 bg-[#25865A]/10 text-[#1f6d49]' : 'border-[#C9473D]/30 bg-[#C9473D]/10 text-[#C9473D]' }}">
+                    Porosia minimale është {{ number_format((float) $minimumOrder, 2, ',', '.') }} € pas zbritjeve.
+                </div>
+
+                <button type="submit" @disabled(! $meetsMinimumOrder) class="btn-primary flex w-full items-center justify-center gap-2 disabled:cursor-not-allowed disabled:opacity-50">
                     Konfirmo porosine
                     <x-store.icon name="check" class="h-4 w-4" />
                 </button>

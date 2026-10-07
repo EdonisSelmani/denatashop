@@ -13,11 +13,33 @@
     $electricCategory = $findCategory(['elektr', 'elektronike']);
     $plumbingCategory = $findCategory(['ujesjelles']);
 
+    $activeCategorySlug = match (true) {
+        request()->routeIs('category.show') => request()->route('slug'),
+        request()->routeIs('subcategory.show') => request()->route('categorySlug'),
+        request()->routeIs('shop') && request()->filled('category') => request()->query('category'),
+        request()->routeIs('shop') && request()->filled('subcategory') => $categoryCollection
+            ->first(fn ($category) => $category->subcategories->contains('slug', request()->query('subcategory')))
+            ?->slug,
+        request()->routeIs('product.show') => $categoryCollection
+            ->first(fn ($category) => $category->subcategories->contains(
+                'id',
+                \App\Models\Product::query()
+                    ->where('slug', request()->route('slug'))
+                    ->where('is_active', true)
+                    ->value('subcategory_id')
+            ))
+            ?->slug,
+        default => null,
+    };
+    $homeIsActive = request()->routeIs('home');
+    $businessIsActive = request()->routeIs('business.*');
+
     $makeCategoryItem = fn ($label, $icon, $category, $fallbackSearch = null) => [
         'label' => $label,
         'icon' => $icon,
         'href' => $category ? route('category.show', $category->slug) : route('shop', $fallbackSearch ? ['search' => $fallbackSearch] : []),
         'category_slug' => $category?->slug,
+        'is_active' => $category?->slug !== null && $category->slug === $activeCategorySlug,
         'children' => $category?->subcategories ?? collect(),
     ];
 
@@ -145,18 +167,45 @@
                 </div>
             </div>
 
-            <a href="{{ route('home') }}" class="relative py-3 text-base font-semibold text-[#9A712E]">
+            <a href="{{ route('home') }}"
+               @if($homeIsActive) aria-current="page" @endif
+               @class([
+                   'relative py-3 text-base font-semibold text-[#9A712E]' => $homeIsActive,
+                   'py-3 text-base font-semibold text-[#111111] transition hover:text-[#9A712E]' => ! $homeIsActive,
+               ])>
                 Ballina
-                <span class="absolute inset-x-0 -bottom-3 h-0.5 bg-[#C9A14A]"></span>
+                @if($homeIsActive)
+                    <span class="absolute inset-x-0 -bottom-3 h-0.5 bg-[#C9A14A]"></span>
+                @endif
             </a>
 
             @foreach($navItems as $item)
-                <a href="{{ $item['href'] }}" class="py-3 text-base font-semibold text-[#111111] transition hover:text-[#9A712E]">
+                <a href="{{ $item['href'] }}"
+                   @if($item['is_active']) aria-current="page" @endif
+                   @class([
+                       'relative py-3 text-base font-semibold text-[#9A712E]' => $item['is_active'],
+                       'py-3 text-base font-semibold text-[#111111] transition hover:text-[#9A712E]' => ! $item['is_active'],
+                   ])>
                     {{ $item['label'] }}
+                    @if($item['is_active'])
+                        <span class="absolute inset-x-0 -bottom-3 h-0.5 bg-[#C9A14A]"></span>
+                    @endif
                 </a>
             @endforeach
+
+            <a href="{{ route('business.index') }}"
+               @if($businessIsActive) aria-current="page" @endif
+               @class([
+                   'relative py-3 text-base font-semibold text-[#9A712E]' => $businessIsActive,
+                   'py-3 text-base font-semibold text-[#111111] transition hover:text-[#9A712E]' => ! $businessIsActive,
+               ])>
+                Për Investitorë
+                @if($businessIsActive)
+                    <span class="absolute inset-x-0 -bottom-3 h-0.5 bg-[#C9A14A]"></span>
+                @endif
+            </a>
         </nav>
     </div>
 
-    <x-store.mobile-menu :nav-items="$navItems" />
+    <x-store.mobile-menu :nav-items="$navItems" :business-is-active="$businessIsActive" />
 </header>

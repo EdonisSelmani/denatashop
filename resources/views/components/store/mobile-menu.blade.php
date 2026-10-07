@@ -1,4 +1,4 @@
-@props(['navItems' => collect()])
+@props(['navItems' => collect(), 'businessIsActive' => false])
 
 <div
     x-cloak
@@ -104,6 +104,20 @@
             @endauth
 
             <nav aria-label="Kategorite mobile" class="space-y-2">
+                <a href="{{ route('business.index') }}"
+                   @click="mobileOpen = false"
+                   @if($businessIsActive) aria-current="page" @endif
+                   @class([
+                       'flex items-center gap-3 rounded-lg border bg-white px-3 py-2.5 font-bold',
+                       'border-[#C9A14A] text-[#9A712E]' => $businessIsActive,
+                       'border-[#E5E1DA] text-[#17191C]' => ! $businessIsActive,
+                   ])>
+                    <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#F7F5F1] text-[#B88A3B]">
+                        <x-store.icon name="package" class="h-4 w-4" />
+                    </span>
+                    <span class="truncate">Për Investitorë</span>
+                </a>
+
                 @foreach($navItems as $item)
                     <div class="rounded-lg border border-[#E5E1DA] bg-white" x-data="{ open: false }">
                         <div class="flex items-center">

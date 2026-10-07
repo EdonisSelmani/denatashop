@@ -7,6 +7,9 @@
 .phpunit.result.cache
 node_modules
 vendor
+database/*.sqlite
+public/build-new.zip
+public/build-seo.zip
 public/hot
 public/storage
 storage/app/public/*
@@ -26,6 +29,9 @@ storage/app/public/*
 storage/framework/cache/*
 storage/framework/sessions/*
 storage/framework/views/*
+storage/framework/testing/*
+storage/debugbar/*
+storage/app/private/import/*
 storage/logs/*
 scripts/
 *.log

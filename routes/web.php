@@ -58,6 +58,7 @@ Route::get('/sitemap.xml', SitemapController::class)
     ->name('sitemap');
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::view('/per-biznese', 'business.index')->name('business.index');
 
 // Public routes
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
